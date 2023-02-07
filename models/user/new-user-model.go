@@ -1,6 +1,8 @@
 package user
 
-import "go-boilerplate-v3/user/aggregates/users"
+import (
+	"go-boilerplate-v3/domains/user/aggregates/users"
+)
 
 type NewUserModel struct {
 	FirstName string `json:"first_name"`

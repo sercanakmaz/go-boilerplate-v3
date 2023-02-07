@@ -5,12 +5,12 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"go-boilerplate-v3/configs"
+	users2 "go-boilerplate-v3/domains/user/aggregates/users"
+	usersController "go-boilerplate-v3/domains/user/core-api/controllers/v1"
 	"go-boilerplate-v3/pkg/config"
 	"go-boilerplate-v3/pkg/log"
 	"go-boilerplate-v3/pkg/middlewares"
 	string_helper "go-boilerplate-v3/pkg/string-helper"
-	"go-boilerplate-v3/user/aggregates/users"
-	usersController "go-boilerplate-v3/user/core-api/controllers/v1"
 	"net/http"
 )
 
@@ -40,7 +40,7 @@ func Init() {
 		AllowMethods: []string{http.MethodGet, http.MethodHead, http.MethodPut, http.MethodPatch, http.MethodPost, http.MethodDelete},
 	}))
 
-	var userService = users.NewUserServiceResolve(cfg.RabbitMQ, cfg.Mongo)
+	var userService = users2.NewUserServiceResolve(cfg.RabbitMQ, cfg.Mongo)
 
 	//e.Use(middleware.BasicAuth(func(username string, password string, ctx echo.Context) (bool, error) {
 	//	return userService.AuthUser(context.Background(), username, password)
@@ -53,12 +53,12 @@ func Init() {
 	}
 }
 
-func NewUserController(e *echo.Echo, userService users.UserService, httpErrorHandler middlewares.HttpErrorHandler) {
+func NewUserController(e *echo.Echo, userService users2.UserService, httpErrorHandler middlewares.HttpErrorHandler) {
 	v1 := e.Group("/users/v1/")
 
 	usersController.CreateGuestUser(v1, userService)
 	usersController.GetUserByObjectId(v1, userService)
 
 	httpErrorHandler.Add(string_helper.ErrIsNullOrEmpty, http.StatusBadRequest)
-	httpErrorHandler.Add(users.ErrAlreadyExistRole, http.StatusConflict)
+	httpErrorHandler.Add(users2.ErrAlreadyExistRole, http.StatusConflict)
 }

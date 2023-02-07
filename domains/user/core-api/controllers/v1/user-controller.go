@@ -3,16 +3,16 @@ package controllers_v1
 import (
 	"context"
 	"github.com/labstack/echo/v4"
+	users2 "go-boilerplate-v3/domains/user/aggregates/users"
 	userModels "go-boilerplate-v3/models/user"
-	"go-boilerplate-v3/user/aggregates/users"
 	"net/http"
 )
 
-func CreateGuestUser(group *echo.Group, userService users.UserService) {
+func CreateGuestUser(group *echo.Group, userService users2.UserService) {
 	group.POST("GuestUser", func(ctx echo.Context) error {
 
 		var (
-			user *users.User
+			user *users2.User
 			err  error
 		)
 
@@ -26,11 +26,11 @@ func CreateGuestUser(group *echo.Group, userService users.UserService) {
 	})
 }
 
-func GetUserByObjectId(group *echo.Group, userService users.UserService) {
+func GetUserByObjectId(group *echo.Group, userService users2.UserService) {
 	group.GET("id/:id", func(ctx echo.Context) error {
 
 		var (
-			user *users.User
+			user *users2.User
 			err  error
 		)
 
