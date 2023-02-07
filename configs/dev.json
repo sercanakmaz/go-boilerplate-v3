@@ -1,0 +1,21 @@
+{
+  "Host": {
+    "Port": 8080
+  },
+  "Mongo": {
+    "MongoDb": "mongodb://mongo0:30000,mongo1:30001,mongo2:30002/?replicaSet=rs0",
+    "Database": "ddd-example"
+  },
+  "RabbitMQ": {
+    "Host": "127.0.0.1",
+    "Port": "5672",
+    "Username": "sa",
+    "Password": "Sa123456",
+    "VHost": "/",
+    "ConnectionName": "go-boilerplate-v3",
+    "Reconnect": {
+      "MaxAttempt": 5,
+      "Interval": 1000
+    }
+  }
+}
