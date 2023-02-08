@@ -3,8 +3,8 @@ package controllers_v1
 import (
 	"context"
 	"github.com/labstack/echo/v4"
-	users2 "go-boilerplate-v3/domains/user/aggregates/users"
 	userModels "go-boilerplate-v3/models/user"
+	users2 "go-boilerplate-v3/products/user/aggregates/users"
 	"net/http"
 )
 

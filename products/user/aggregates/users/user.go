@@ -3,10 +3,10 @@ package users
 import (
 	"errors"
 	"fmt"
-	"go-boilerplate-v3/domains/user/aggregates"
 	userEvents "go-boilerplate-v3/events/user"
 	"go-boilerplate-v3/pkg/ddd"
 	"go-boilerplate-v3/pkg/string-helper"
+	"go-boilerplate-v3/products/user/aggregates"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 

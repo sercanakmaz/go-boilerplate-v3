@@ -5,12 +5,12 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"go-boilerplate-v3/configs"
-	users2 "go-boilerplate-v3/domains/user/aggregates/users"
-	usersController "go-boilerplate-v3/domains/user/core-api/controllers/v1"
 	"go-boilerplate-v3/pkg/config"
 	"go-boilerplate-v3/pkg/log"
 	"go-boilerplate-v3/pkg/middlewares"
 	string_helper "go-boilerplate-v3/pkg/string-helper"
+	users2 "go-boilerplate-v3/products/user/aggregates/users"
+	usersController "go-boilerplate-v3/products/user/core-api/controllers/v1"
 	"net/http"
 )
 
