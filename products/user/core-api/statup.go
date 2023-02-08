@@ -8,7 +8,6 @@ import (
 	"go-boilerplate-v3/pkg/config"
 	"go-boilerplate-v3/pkg/log"
 	"go-boilerplate-v3/pkg/middlewares"
-	string_helper "go-boilerplate-v3/pkg/string-helper"
 	users2 "go-boilerplate-v3/products/user/aggregates/users"
 	usersController "go-boilerplate-v3/products/user/core-api/controllers/v1"
 	"net/http"
@@ -46,19 +45,9 @@ func Init() {
 	//	return userService.AuthUser(context.Background(), username, password)
 	//}))
 
-	NewUserController(e, userService, httpErrorHandler)
+	usersController.NewUserController(e, userService, httpErrorHandler)
 
 	if err := e.Start(fmt.Sprintf(":%v", cfg.Host.Port)); err != nil {
 		panic(err)
 	}
-}
-
-func NewUserController(e *echo.Echo, userService users2.UserService, httpErrorHandler middlewares.HttpErrorHandler) {
-	v1 := e.Group("/users/v1/")
-
-	usersController.CreateGuestUser(v1, userService)
-	usersController.GetUserByObjectId(v1, userService)
-
-	httpErrorHandler.Add(string_helper.ErrIsNullOrEmpty, http.StatusBadRequest)
-	httpErrorHandler.Add(users2.ErrAlreadyExistRole, http.StatusConflict)
 }

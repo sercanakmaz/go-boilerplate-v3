@@ -15,3 +15,18 @@ domains
     - product
     - delivery
     - merchant
+
+
+business
+    X modeli=entity
+    A modeli
+data
+    X modeli=entity
+    A modeli multiple entities
+application
+    ihtiyaç Z modeli yoksa X modeli=entity
+    ihtiyaç varsa B modeli yoksa A modeli 
+
+
+Event Handler senkron = hata durumunda revert yapılır
+Event Consumer asenkron = hata durumunda revert yapılmaz, error queue'ya düşer

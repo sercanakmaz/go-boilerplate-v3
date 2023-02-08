@@ -67,6 +67,11 @@ func (self *httpErrorHandler) Handler(err error, c echo.Context) {
 		}
 	}
 
+	// {
+	//   Code: "ErrIsNullOrEmpty"
+	//   Message: "role ErrIsNullOrEmpty"
+	// }
+
 	code := he.Code
 	message := he.Message
 	if m, ok := he.Message.(string); ok {

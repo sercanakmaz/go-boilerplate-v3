@@ -4,9 +4,21 @@ import (
 	"context"
 	"github.com/labstack/echo/v4"
 	userModels "go-boilerplate-v3/models/user"
+	"go-boilerplate-v3/pkg/middlewares"
+	string_helper "go-boilerplate-v3/pkg/string-helper"
 	users2 "go-boilerplate-v3/products/user/aggregates/users"
 	"net/http"
 )
+
+func NewUserController(e *echo.Echo, userService users2.UserService, httpErrorHandler middlewares.HttpErrorHandler) {
+	v1 := e.Group("/users/v1/")
+
+	CreateGuestUser(v1, userService)
+	GetUserByObjectId(v1, userService)
+
+	httpErrorHandler.Add(string_helper.ErrIsNullOrEmpty, http.StatusBadRequest)
+	httpErrorHandler.Add(users2.ErrAlreadyExistRole, http.StatusConflict)
+}
 
 func CreateGuestUser(group *echo.Group, userService users2.UserService) {
 	group.POST("GuestUser", func(ctx echo.Context) error {

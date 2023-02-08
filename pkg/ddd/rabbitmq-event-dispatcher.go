@@ -2,7 +2,6 @@ package ddd
 
 import (
 	"github.com/rozturac/rmqc"
-	"reflect"
 )
 
 type RabbitMQEventDispatcher struct {
@@ -15,8 +14,6 @@ func NewRabbitMQEventDispatcher(rbt *rmqc.RabbitMQ) IEventDispatcher {
 
 func (handler RabbitMQEventDispatcher) Dispatch(events []IBaseEvent) {
 	for _, event := range events {
-		t := reflect.TypeOf(event)
-		eventName := t.Elem().Name()
-		handler.rbt.Publish(eventName, "", event)
+		handler.rbt.Publish(event.ExchangeName(), "", event)
 	}
 }
