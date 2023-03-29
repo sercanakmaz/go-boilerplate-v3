@@ -3,10 +3,10 @@ package controllers_v1
 import (
 	"context"
 	"github.com/labstack/echo/v4"
-	"go-boilerplate-v3/contexts/user/core-api/aggregates/users"
-	userModels "go-boilerplate-v3/models/user"
-	"go-boilerplate-v3/pkg/middlewares"
-	string_helper "go-boilerplate-v3/pkg/string-helper"
+	"github.com/sercanakmaz/go-boilerplate-v3/contexts/user/core-api/aggregates/users"
+	userModels "github.com/sercanakmaz/go-boilerplate-v3/models/user"
+	"github.com/sercanakmaz/go-boilerplate-v3/pkg/middlewares"
+	string_helper "github.com/sercanakmaz/go-boilerplate-v3/pkg/string-helper"
 	"net/http"
 )
 

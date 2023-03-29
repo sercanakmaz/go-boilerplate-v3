@@ -1,9 +1,9 @@
 package products
 
 import (
-	"go-boilerplate-v3/events/product/products"
-	"go-boilerplate-v3/models/shared"
-	"go-boilerplate-v3/pkg/ddd"
+	"github.com/sercanakmaz/go-boilerplate-v3/events/product/products"
+	"github.com/sercanakmaz/go-boilerplate-v3/models/shared"
+	"github.com/sercanakmaz/go-boilerplate-v3/pkg/ddd"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 

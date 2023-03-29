@@ -2,7 +2,7 @@ package order
 
 import (
 	"fmt"
-	"go-boilerplate-v3/anticorruption"
+	"github.com/sercanakmaz/go-boilerplate-v3/anticorruption"
 )
 
 type OrderDomainService struct {

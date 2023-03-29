@@ -4,24 +4,24 @@ import (
 	"fmt"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"go-boilerplate-v3/configs"
-	"go-boilerplate-v3/contexts/product/core-api/aggregates/products"
-	controllers_v1 "go-boilerplate-v3/contexts/product/core-api/controllers/v1"
-	"go-boilerplate-v3/pkg/config"
-	"go-boilerplate-v3/pkg/log"
-	"go-boilerplate-v3/pkg/middlewares"
+	"github.com/sercanakmaz/go-boilerplate-v3/configs"
+	"github.com/sercanakmaz/go-boilerplate-v3/contexts/product/core-api/aggregates/products"
+	controllers_v1 "github.com/sercanakmaz/go-boilerplate-v3/contexts/product/core-api/controllers/v1"
+	"github.com/sercanakmaz/go-boilerplate-v3/pkg/config"
+	"github.com/sercanakmaz/go-boilerplate-v3/pkg/log"
+	"github.com/sercanakmaz/go-boilerplate-v3/pkg/middlewares"
+	"github.com/spf13/cobra"
 	"net/http"
 )
 
-func Init() {
-
+func Init(cmd *cobra.Command, args []string) error {
 	var (
 		cfg configs.Config
 		err error
 	)
 
 	if err = config.Load(&cfg); err != nil {
-		panic(err)
+		return err
 	}
 
 	var logger = log.NewLogger()
@@ -47,7 +47,5 @@ func Init() {
 
 	controllers_v1.NewProductController(e, productService, httpErrorHandler)
 
-	if err := e.Start(fmt.Sprintf(":%v", cfg.Host.Port)); err != nil {
-		panic(err)
-	}
+	return e.Start(fmt.Sprintf(":%v", cfg.Host.Port))
 }

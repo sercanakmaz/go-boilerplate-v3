@@ -1,7 +1,7 @@
 package ddd
 
 import (
-	"github.com/rozturac/rmqc"
+	"github.com/sercanakmaz/go-boilerplate-v3/pkg/rmqc"
 )
 
 type RabbitMQEventDispatcher struct {

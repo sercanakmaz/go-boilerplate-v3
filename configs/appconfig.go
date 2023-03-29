@@ -1,8 +1,8 @@
 package configs
 
 import (
-	"go-boilerplate-v3/pkg/mongo"
-	"go-boilerplate-v3/pkg/rabbitmqv2"
+	"github.com/sercanakmaz/go-boilerplate-v3/pkg/mongo"
+	"github.com/sercanakmaz/go-boilerplate-v3/pkg/rabbitmqv2"
 )
 
 type Config struct {

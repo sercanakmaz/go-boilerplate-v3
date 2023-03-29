@@ -1,6 +1,6 @@
 package anticorruption
 
-import "go-boilerplate-v3/models/user"
+import "github.com/sercanakmaz/go-boilerplate-v3/models/user"
 
 type UserHttpClient struct {
 }

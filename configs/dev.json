@@ -12,7 +12,7 @@
     "Username": "sa",
     "Password": "Sa123456",
     "VHost": "/",
-    "ConnectionName": "go-boilerplate-v3",
+    "ConnectionName": "github.com/sercanakmaz/go-boilerplate-v3",
     "Reconnect": {
       "MaxAttempt": 5,
       "Interval": 1000

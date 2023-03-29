@@ -2,7 +2,7 @@ package products
 
 import (
 	"context"
-	"go-boilerplate-v3/models/shared"
+	"github.com/sercanakmaz/go-boilerplate-v3/models/shared"
 )
 
 type (

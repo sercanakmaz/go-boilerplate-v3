@@ -1,7 +1,7 @@
 package user
 
 import (
-	"go-boilerplate-v3/contexts/user/core-api/aggregates/users"
+	"github.com/sercanakmaz/go-boilerplate-v3/contexts/user/core-api/aggregates/users"
 )
 
 type NewUserModel struct {

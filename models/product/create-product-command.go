@@ -1,7 +1,7 @@
 package product
 
 import (
-	"go-boilerplate-v3/models/shared"
+	"github.com/sercanakmaz/go-boilerplate-v3/models/shared"
 )
 
 type CreateProductCommand struct {

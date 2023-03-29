@@ -2,8 +2,8 @@ package rabbitmqv1
 
 import (
 	"fmt"
+	"github.com/sercanakmaz/go-boilerplate-v3/pkg/log"
 	"github.com/streadway/amqp"
-	"go-boilerplate-v3/pkg/log"
 	"golang.org/x/net/context"
 	"golang.org/x/sync/errgroup"
 	"net"

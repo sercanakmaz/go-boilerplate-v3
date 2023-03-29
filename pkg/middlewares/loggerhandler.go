@@ -4,11 +4,11 @@ import (
 	"bytes"
 	"context"
 	"encoding/binary"
+	"github.com/labstack/echo/v4"
 	"io/ioutil"
 	"time"
 
-	"github.com/labstack/echo/v4"
-	logger "go-boilerplate-v3/pkg/log"
+	logger "github.com/sercanakmaz/go-boilerplate-v3/pkg/log"
 )
 
 const LogExtra = "Log_Extra"

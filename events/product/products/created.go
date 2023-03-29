@@ -1,8 +1,8 @@
 package products
 
 import (
-	"go-boilerplate-v3/models/shared"
-	"go-boilerplate-v3/pkg/ddd"
+	"github.com/sercanakmaz/go-boilerplate-v3/models/shared"
+	"github.com/sercanakmaz/go-boilerplate-v3/pkg/ddd"
 )
 
 type Created struct {

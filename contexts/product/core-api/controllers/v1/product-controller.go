@@ -3,11 +3,11 @@ package controllers_v1
 import (
 	"fmt"
 	"github.com/labstack/echo/v4"
-	"go-boilerplate-v3/contexts/product/core-api/aggregates/products"
-	productModels "go-boilerplate-v3/models/product"
-	ourhttp "go-boilerplate-v3/pkg/http"
-	"go-boilerplate-v3/pkg/middlewares"
-	string_helper "go-boilerplate-v3/pkg/string-helper"
+	"github.com/sercanakmaz/go-boilerplate-v3/contexts/product/core-api/aggregates/products"
+	productModels "github.com/sercanakmaz/go-boilerplate-v3/models/product"
+	ourhttp "github.com/sercanakmaz/go-boilerplate-v3/pkg/http"
+	"github.com/sercanakmaz/go-boilerplate-v3/pkg/middlewares"
+	string_helper "github.com/sercanakmaz/go-boilerplate-v3/pkg/string-helper"
 	"net/http"
 )
 

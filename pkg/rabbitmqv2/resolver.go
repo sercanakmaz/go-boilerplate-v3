@@ -1,8 +1,8 @@
 package rabbitmqv2
 
 import (
-	"github.com/rozturac/rmqc"
-	"go-boilerplate-v3/pkg/ddd"
+	"github.com/sercanakmaz/go-boilerplate-v3/pkg/ddd"
+	"github.com/sercanakmaz/go-boilerplate-v3/pkg/rmqc"
 	"sync"
 )
 

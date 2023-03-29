@@ -1,7 +1,7 @@
 package billinginfo
 
 import (
-	"go-boilerplate-v3/events/user/users"
+	"github.com/sercanakmaz/go-boilerplate-v3/events/user/users"
 )
 
 // listen user created event in memory and update your datasource

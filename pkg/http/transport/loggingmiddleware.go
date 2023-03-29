@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"time"
 
-	"go-boilerplate-v3/pkg/log"
+	"github.com/sercanakmaz/go-boilerplate-v3/pkg/log"
 )
 
 type loggignMiddleware struct {

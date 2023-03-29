@@ -3,7 +3,7 @@ package aggregates
 import (
 	"crypto/sha256"
 	"fmt"
-	string_helper "go-boilerplate-v3/pkg/string-helper"
+	string_helper "github.com/sercanakmaz/go-boilerplate-v3/pkg/string-helper"
 	"math/rand"
 	"time"
 )
