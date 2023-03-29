@@ -1,7 +1,7 @@
 package ddd
 
 type IAggregateRoot interface {
-	AddEvent(event IBaseEvent)
+	RaiseEvent(event IBaseEvent)
 	GetDomainEvents() []IBaseEvent
 	ClearDomainEvents()
 }

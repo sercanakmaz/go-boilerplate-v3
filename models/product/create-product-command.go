@@ -1,8 +1,11 @@
 package product
 
+import "go-boilerplate-v3/models/shared"
+
 type CreateProductCommand struct {
-	Sku          string `json:"sku"`
-	Name         string `json:"name"`
-	InitialStock int    `json:"initialStock"`
-	CategoryID   int    `json:"categoryID"`
+	Sku          string       `json:"sku"`
+	Name         string       `json:"name"`
+	InitialStock int          `json:"initialStock"`
+	CategoryID   int          `json:"categoryID"`
+	Price        shared.Money `json:"price"`
 }

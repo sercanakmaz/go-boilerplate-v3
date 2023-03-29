@@ -1,10 +1,13 @@
 package products
 
-import "context"
+import (
+	"context"
+	"go-boilerplate-v3/models/shared"
+)
 
 type (
 	IProductService interface {
-		AddNew(ctx context.Context, sku string, name string, initialStock int, categoryID int) (*Product, error)
+		AddNew(ctx context.Context, sku string, name string, initialStock int, price shared.Money, categoryID int) (*Product, error)
 		IncreaseStock(ctx context.Context, sku string, amount int) error
 		DecreaseStock(ctx context.Context, sku string, amount int) error
 		GetBySku(ctx context.Context, sku string) (*Product, error)
@@ -18,8 +21,8 @@ func NewProductService(repository IProductRepository) IProductService {
 	return &productService{Repository: repository}
 }
 
-func (service productService) AddNew(ctx context.Context, sku string, name string, initialStock int, categoryID int) (*Product, error) {
-	var product = NewProduct(sku, name, initialStock, categoryID)
+func (service productService) AddNew(ctx context.Context, sku string, name string, initialStock int, price shared.Money, categoryID int) (*Product, error) {
+	var product = NewProduct(sku, name, initialStock, price, categoryID)
 
 	var err = service.Repository.Add(ctx, product)
 

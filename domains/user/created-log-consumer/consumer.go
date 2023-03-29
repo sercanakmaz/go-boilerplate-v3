@@ -3,7 +3,7 @@ package created_log_consumer
 import (
 	"fmt"
 	"github.com/rozturac/rmqc"
-	"go-boilerplate-v3/events/user"
+	"go-boilerplate-v3/events/user/users"
 )
 
 type UserCreatedConsumer struct {
@@ -22,7 +22,7 @@ func (u UserCreatedConsumer) Configure(builder *rmqc.ConsumerBuilder) {
 }
 
 func (u UserCreatedConsumer) Consume(context *rmqc.ConsumerContext) {
-	var event user.UserCreated
+	var event users.UserCreated
 	context.Unmarshal(&event)
 	fmt.Println(event)
 }

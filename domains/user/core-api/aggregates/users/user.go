@@ -3,8 +3,8 @@ package users
 import (
 	"errors"
 	"fmt"
-	"go-boilerplate-v3/domains/user/aggregates"
-	userEvents "go-boilerplate-v3/events/user"
+	"go-boilerplate-v3/domains/user/core-api/aggregates"
+	userEvents "go-boilerplate-v3/events/user/users"
 	"go-boilerplate-v3/pkg/ddd"
 	"go-boilerplate-v3/pkg/string-helper"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -30,7 +30,7 @@ func (u *User) GetDomainEvents() []ddd.IBaseEvent {
 	return u.domainEvents
 }
 
-func (u *User) AddEvent(event ddd.IBaseEvent) {
+func (u *User) RaiseEvent(event ddd.IBaseEvent) {
 	u.domainEvents = append(u.domainEvents, event)
 }
 
@@ -50,7 +50,7 @@ func NewUser(firstName, lastName, username, password string) *User {
 		EncryptedPassword: aggregates.NewEncryptedPassword(password),
 	}
 
-	user.AddEvent(&userEvents.UserCreated{
+	user.RaiseEvent(&userEvents.UserCreated{
 		Id:        user.Id,
 		FirstName: firstName,
 		LastName:  lastName,

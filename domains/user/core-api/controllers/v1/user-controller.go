@@ -3,28 +3,28 @@ package controllers_v1
 import (
 	"context"
 	"github.com/labstack/echo/v4"
-	users2 "go-boilerplate-v3/domains/user/aggregates/users"
+	"go-boilerplate-v3/domains/user/core-api/aggregates/users"
 	userModels "go-boilerplate-v3/models/user"
 	"go-boilerplate-v3/pkg/middlewares"
 	string_helper "go-boilerplate-v3/pkg/string-helper"
 	"net/http"
 )
 
-func NewUserController(e *echo.Echo, userService users2.UserService, httpErrorHandler middlewares.HttpErrorHandler) {
+func NewUserController(e *echo.Echo, userService users.UserService, httpErrorHandler middlewares.HttpErrorHandler) {
 	v1 := e.Group("/users/v1/")
 
 	CreateGuestUser(v1, userService)
 	GetUserByObjectId(v1, userService)
 
 	httpErrorHandler.Add(string_helper.ErrIsNullOrEmpty, http.StatusBadRequest)
-	httpErrorHandler.Add(users2.ErrAlreadyExistRole, http.StatusConflict)
+	httpErrorHandler.Add(users.ErrAlreadyExistRole, http.StatusConflict)
 }
 
-func CreateGuestUser(group *echo.Group, userService users2.UserService) {
+func CreateGuestUser(group *echo.Group, userService users.UserService) {
 	group.POST("GuestUser", func(ctx echo.Context) error {
 
 		var (
-			user *users2.User
+			user *users.User
 			err  error
 		)
 
@@ -38,11 +38,11 @@ func CreateGuestUser(group *echo.Group, userService users2.UserService) {
 	})
 }
 
-func GetUserByObjectId(group *echo.Group, userService users2.UserService) {
+func GetUserByObjectId(group *echo.Group, userService users.UserService) {
 	group.GET("id/:id", func(ctx echo.Context) error {
 
 		var (
-			user *users2.User
+			user *users.User
 			err  error
 		)
 

@@ -5,7 +5,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"go-boilerplate-v3/configs"
-	users2 "go-boilerplate-v3/domains/user/aggregates/users"
+	users2 "go-boilerplate-v3/domains/user/core-api/aggregates/users"
 	usersController "go-boilerplate-v3/domains/user/core-api/controllers/v1"
 	"go-boilerplate-v3/pkg/config"
 	"go-boilerplate-v3/pkg/log"
