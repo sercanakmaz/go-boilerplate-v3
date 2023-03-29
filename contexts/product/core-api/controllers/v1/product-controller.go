@@ -3,7 +3,7 @@ package controllers_v1
 import (
 	"fmt"
 	"github.com/labstack/echo/v4"
-	"go-boilerplate-v3/domains/product/core-api/aggregates/products"
+	"go-boilerplate-v3/contexts/product/core-api/aggregates/products"
 	productModels "go-boilerplate-v3/models/product"
 	ourhttp "go-boilerplate-v3/pkg/http"
 	"go-boilerplate-v3/pkg/middlewares"

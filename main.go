@@ -1,8 +1,8 @@
 package main
 
 import (
-	"go-boilerplate-v3/domains/user/core-api"
-	"go-boilerplate-v3/domains/user/created-log-consumer"
+	"go-boilerplate-v3/contexts/user/core-api"
+	"go-boilerplate-v3/contexts/user/created-log-consumer"
 	"log"
 	"os"
 )

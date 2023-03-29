@@ -1,6 +1,8 @@
 package product
 
-import "go-boilerplate-v3/models/shared"
+import (
+	"go-boilerplate-v3/models/shared"
+)
 
 type CreateProductCommand struct {
 	Sku          string       `json:"sku"`

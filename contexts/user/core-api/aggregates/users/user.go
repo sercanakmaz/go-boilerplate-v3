@@ -3,7 +3,7 @@ package users
 import (
 	"errors"
 	"fmt"
-	"go-boilerplate-v3/domains/user/core-api/aggregates"
+	"go-boilerplate-v3/contexts/user/core-api/aggregates"
 	userEvents "go-boilerplate-v3/events/user/users"
 	"go-boilerplate-v3/pkg/ddd"
 	"go-boilerplate-v3/pkg/string-helper"
