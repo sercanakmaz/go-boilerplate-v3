@@ -1,3 +1,19 @@
+İş Listesi
+- Http Logging Middleware
+- Echo Logging Middleware
+- Command Validation
+- RabbitMQ Consumer & Publisher
+- RabbitMQ Logging Middleware
+- App Config Management
+- App Secret Management
+- Outbox Pattern
+- APM
+- Sidecar Service Applications (Config, Localization, Feaute Toggle)
+- Sidecar Service Implementation
+- Dependecy Injection?
+- Packaging & Dependecy validation at build time
+- Comprehensive documentation & readme
+
 pkg
 anticorruption / http, api vb external data sources
 events / her domain'in eventi
