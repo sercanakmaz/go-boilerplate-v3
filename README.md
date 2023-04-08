@@ -1,4 +1,5 @@
 İş Listesi
+- Event Handlers
 - Http Logging Middleware
 - Echo Logging Middleware
 - Command Validation
