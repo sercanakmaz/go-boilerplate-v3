@@ -8,10 +8,11 @@ import (
 type Created struct {
 	Id         string       `json:"id"`
 	Sku        string       `json:"sku"`
-	Name       string       `json:"Name"`
-	Stock      int          `json:"Stock"`
-	Price      shared.Money `json:"Price"`
-	CategoryId int          `json:"CategoryId"`
+	Name       string       `json:"name"`
+	Stock      int          `json:"stock"`
+	Price      shared.Money `json:"price"`
+	FinalPrice shared.Money `json:"finalPrice"`
+	CategoryId int          `json:"categoryId"`
 	ddd.IBaseEvent
 }
 

@@ -1,0 +1,86 @@
+basePath: '{{.BasePath}}'
+definitions:
+  order.CreateOrderCommand:
+    properties:
+      orderNumber:
+        type: string
+      price:
+        type: string
+    type: object
+  orders.Order:
+    properties:
+      domainEvents:
+        type: string
+      finalPrice:
+        type: string
+      id:
+        type: string
+      orderNumber:
+        type: string
+      price:
+        type: string
+      vat:
+        type: number
+    type: object
+host: '{{.Host}}'
+info:
+  contact: {}
+  description: '{{.Description}}'
+  license: {}
+  title: '{{.Title}}'
+  version: '{{.Version}}'
+paths:
+  /v1/orders/:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: body
+        in: body
+        name: c
+        required: true
+        schema:
+          $ref: '#/definitions/order.CreateOrderCommand'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/orders.Order'
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+  /v1/orders/orderNumber/{orderNumber}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Order Number
+        in: path
+        name: orderNumber
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+swagger: "2.0"

@@ -23,6 +23,14 @@ func NewProductController(e *echo.Echo, productService products.IProductService,
 	httpErrorHandler.Add(ourhttp.ErrCommandBindFailed, http.StatusBadRequest)
 }
 
+// CreateProduct godoc
+// @Accept  json
+// @Produce  json
+// @Param c body product.CreateProductCommand true "body"
+// @Success 201 {object} products.Product
+// @Failure 400 {string} string
+// @Failure 500 {string} string
+// @Router /v1/products/ [post]
 func CreateProduct(group *echo.Group, productService products.IProductService) {
 	group.POST("", func(ctx echo.Context) error {
 
@@ -49,6 +57,15 @@ func CreateProduct(group *echo.Group, productService products.IProductService) {
 	})
 }
 
+// IncreaseStock godoc
+// @Accept  json
+// @Produce  json
+// @Param sku path string true "SKU"
+// @Param c body product.IncreaseProductStockCommand true "body"
+// @Success 200 {string} string
+// @Failure 400 {string} string
+// @Failure 500 {string} string
+// @Router /v1/products/increase-stock/{sku} [put]
 func IncreaseStock(group *echo.Group, productService products.IProductService) {
 	group.PUT("increase-stock/:sku", func(ctx echo.Context) error {
 
@@ -73,6 +90,15 @@ func IncreaseStock(group *echo.Group, productService products.IProductService) {
 	})
 }
 
+// DecreaseStock godoc
+// @Accept  json
+// @Produce  json
+// @Param sku path string true "SKU"
+// @Param c body product.DecreaseProductStockCommand true "body"
+// @Success 200 {string} string
+// @Failure 400 {string} string
+// @Failure 500 {string} string
+// @Router /v1/products/decrease-stock/{sku} [put]
 func DecreaseStock(group *echo.Group, productService products.IProductService) {
 	group.PUT("decrease-stock/:sku", func(ctx echo.Context) error {
 
@@ -97,6 +123,14 @@ func DecreaseStock(group *echo.Group, productService products.IProductService) {
 	})
 }
 
+// GetProductBySku godoc
+// @Accept  json
+// @Produce  json
+// @Param sku path string true "SKU"
+// @Success 200 {string} string
+// @Failure 400 {string} string
+// @Failure 500 {string} string
+// @Router /v1/products/id/{id} [get]
 func GetProductBySku(group *echo.Group, productService products.IProductService) {
 	group.GET("id/:id", func(ctx echo.Context) error {
 
