@@ -2,7 +2,7 @@ package products
 
 import (
 	"context"
-	"github.com/sercanakmaz/go-boilerplate-v3/pkg/ddd"
+	"github.com/sercanakmaz/go-boilerplate-v3/pkg/ddd/event-handler"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -20,10 +20,10 @@ const _collectionName = "Products"
 
 type productRepository struct {
 	db              *mongo.Database
-	eventDispatcher ddd.IEventDispatcher
+	eventDispatcher event_handler.IEventDispatcher
 }
 
-func newProductRepository(db *mongo.Database, eventDispatcher ddd.IEventDispatcher) IProductRepository {
+func newProductRepository(db *mongo.Database, eventDispatcher event_handler.IEventDispatcher) IProductRepository {
 	return &productRepository{db: db, eventDispatcher: eventDispatcher}
 }
 

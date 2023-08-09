@@ -3,7 +3,7 @@ package products
 import (
 	"github.com/sercanakmaz/go-boilerplate-v3/events/product/products"
 	"github.com/sercanakmaz/go-boilerplate-v3/models/shared"
-	"github.com/sercanakmaz/go-boilerplate-v3/pkg/ddd"
+	"github.com/sercanakmaz/go-boilerplate-v3/pkg/ddd/event-handler"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -16,18 +16,18 @@ type Product struct {
 	FinalPrice   shared.Money       `json:"finalPrice" bson:"FinalPrice"`
 	Vat          float64            `json:"vat" bson:"vat"`
 	CategoryId   int                `json:"categoryId" bson:"CategoryId"`
-	domainEvents []ddd.IBaseEvent
+	domainEvents []event_handler.IBaseEvent
 }
 
 func (u *Product) ClearDomainEvents() {
 	u.domainEvents = nil
 }
 
-func (u *Product) GetDomainEvents() []ddd.IBaseEvent {
+func (u *Product) GetDomainEvents() []event_handler.IBaseEvent {
 	return u.domainEvents
 }
 
-func (u *Product) RaiseEvent(event ddd.IBaseEvent) {
+func (u *Product) RaiseEvent(event event_handler.IBaseEvent) {
 	u.domainEvents = append(u.domainEvents, event)
 }
 

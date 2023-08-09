@@ -2,7 +2,7 @@ package users
 
 import (
 	"context"
-	"github.com/sercanakmaz/go-boilerplate-v3/pkg/ddd"
+	"github.com/sercanakmaz/go-boilerplate-v3/pkg/ddd/event-handler"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -20,10 +20,10 @@ const _collectionName = "Users"
 
 type userRepository struct {
 	db              *mongo.Database
-	eventDispatcher ddd.IEventDispatcher
+	eventDispatcher event_handler.IEventDispatcher
 }
 
-func newUserRepository(db *mongo.Database, eventDispatcher ddd.IEventDispatcher) IUserRepository {
+func newUserRepository(db *mongo.Database, eventDispatcher event_handler.IEventDispatcher) IUserRepository {
 	return &userRepository{db: db, eventDispatcher: eventDispatcher}
 }
 

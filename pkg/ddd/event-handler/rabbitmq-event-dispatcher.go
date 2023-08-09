@@ -1,4 +1,4 @@
-package ddd
+package event_handler
 
 import (
 	"github.com/sercanakmaz/go-boilerplate-v3/pkg/rmqc"

@@ -2,7 +2,7 @@ package products
 
 import (
 	"github.com/sercanakmaz/go-boilerplate-v3/models/shared"
-	"github.com/sercanakmaz/go-boilerplate-v3/pkg/ddd"
+	"github.com/sercanakmaz/go-boilerplate-v3/pkg/ddd/event-handler"
 )
 
 type Created struct {
@@ -13,7 +13,7 @@ type Created struct {
 	Price      shared.Money `json:"price"`
 	FinalPrice shared.Money `json:"finalPrice"`
 	CategoryId int          `json:"categoryId"`
-	ddd.IBaseEvent
+	event_handler.IBaseEvent
 }
 
 func (s *Created) ExchangeName() string {

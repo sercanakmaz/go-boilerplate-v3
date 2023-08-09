@@ -3,8 +3,10 @@ package controllers_v1
 import (
 	"fmt"
 	"github.com/labstack/echo/v4"
-	"github.com/sercanakmaz/go-boilerplate-v3/contexts/oms/core-api/aggregates/orders"
+	"github.com/sercanakmaz/go-boilerplate-v3/contexts/oms/core-api/application"
+	"github.com/sercanakmaz/go-boilerplate-v3/contexts/oms/core-api/domain/orders"
 	orderModels "github.com/sercanakmaz/go-boilerplate-v3/models/order"
+	use_case "github.com/sercanakmaz/go-boilerplate-v3/pkg/ddd/use-case"
 	ourhttp "github.com/sercanakmaz/go-boilerplate-v3/pkg/http"
 	"github.com/sercanakmaz/go-boilerplate-v3/pkg/middlewares"
 	string_helper "github.com/sercanakmaz/go-boilerplate-v3/pkg/string-helper"
@@ -34,7 +36,7 @@ func CreateOrder(group *echo.Group, orderService orders.IOrderService) {
 
 		var (
 			command *orderModels.CreateOrderCommand
-			order   *orders.Order
+			result  = new(use_case.UseCaseResult[*orders.Order])
 			err     error
 		)
 
@@ -42,13 +44,13 @@ func CreateOrder(group *echo.Group, orderService orders.IOrderService) {
 			panic(fmt.Errorf("%v %w", "CreateOrderCommand", ourhttp.ErrCommandBindFailed))
 		}
 
-		if order, err = orderService.AddNew(ctx.Request().Context(),
-			command.OrderNumber,
-			command.Price); err != nil {
-			return err
+		var handler = application.NewCreateOrderUseCaseHandler(orderService)
+
+		if err = use_case.Handle(ctx.Request().Context(), handler, command, result); err != nil {
+			panic(fmt.Errorf("%v %w", "CreateOrderCommand", ourhttp.ErrUseCaseHandleFailed))
 		}
 
-		return ctx.JSON(http.StatusCreated, order)
+		return ctx.JSON(result.HttpStatusCode, result.Content)
 	})
 }
 

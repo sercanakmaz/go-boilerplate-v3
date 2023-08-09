@@ -5,9 +5,9 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/sercanakmaz/go-boilerplate-v3/configs"
-	"github.com/sercanakmaz/go-boilerplate-v3/contexts/oms/core-api/aggregates/orders"
 	controllers_v1 "github.com/sercanakmaz/go-boilerplate-v3/contexts/oms/core-api/controllers/v1"
 	"github.com/sercanakmaz/go-boilerplate-v3/contexts/oms/core-api/docs"
+	"github.com/sercanakmaz/go-boilerplate-v3/contexts/oms/core-api/domain/orders"
 	"github.com/sercanakmaz/go-boilerplate-v3/pkg/config"
 	"github.com/sercanakmaz/go-boilerplate-v3/pkg/log"
 	"github.com/sercanakmaz/go-boilerplate-v3/pkg/middlewares"
@@ -27,7 +27,7 @@ func Init(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	var logger = log.NewLogger()
+	logger := log.NewLogger()
 	httpErrorHandler := middlewares.NewHttpErrorHandler()
 
 	e := echo.New()

@@ -2,7 +2,7 @@ package orders
 
 import (
 	"context"
-	"github.com/sercanakmaz/go-boilerplate-v3/pkg/ddd"
+	"github.com/sercanakmaz/go-boilerplate-v3/pkg/ddd/event-handler"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -20,10 +20,10 @@ const _collectionName = "Orders"
 
 type orderRepository struct {
 	db              *mongo.Database
-	eventDispatcher ddd.IEventDispatcher
+	eventDispatcher event_handler.IEventDispatcher
 }
 
-func newOrderRepository(db *mongo.Database, eventDispatcher ddd.IEventDispatcher) IOrderRepository {
+func newOrderRepository(db *mongo.Database, eventDispatcher event_handler.IEventDispatcher) IOrderRepository {
 	return &orderRepository{db: db, eventDispatcher: eventDispatcher}
 }
 

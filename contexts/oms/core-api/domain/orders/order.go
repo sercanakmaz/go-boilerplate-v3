@@ -3,7 +3,7 @@ package orders
 import (
 	"github.com/sercanakmaz/go-boilerplate-v3/events/oms/orders"
 	"github.com/sercanakmaz/go-boilerplate-v3/models/shared"
-	"github.com/sercanakmaz/go-boilerplate-v3/pkg/ddd"
+	"github.com/sercanakmaz/go-boilerplate-v3/pkg/ddd/event-handler"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -13,18 +13,18 @@ type Order struct {
 	Price        shared.Money       `json:"price" bson:"Price"`
 	FinalPrice   shared.Money       `json:"finalPrice" bson:"FinalPrice"`
 	Vat          float64            `json:"vat" bson:"vat"`
-	domainEvents []ddd.IBaseEvent
+	domainEvents []event_handler.IBaseEvent
 }
 
 func (u *Order) ClearDomainEvents() {
 	u.domainEvents = nil
 }
 
-func (u *Order) GetDomainEvents() []ddd.IBaseEvent {
+func (u *Order) GetDomainEvents() []event_handler.IBaseEvent {
 	return u.domainEvents
 }
 
-func (u *Order) RaiseEvent(event ddd.IBaseEvent) {
+func (u *Order) RaiseEvent(event event_handler.IBaseEvent) {
 	u.domainEvents = append(u.domainEvents, event)
 }
 
