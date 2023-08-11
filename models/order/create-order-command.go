@@ -8,6 +8,7 @@ import (
 type CreateOrderCommand struct {
 	OrderNumber string                    `json:"orderNumber"`
 	Price       shared.Money              `json:"price"`
+	OrderLines  []OrderLine               `json:"orderLines"`
 	identity    *use_case.UseCaseIdentity `json:"_"`
 }
 

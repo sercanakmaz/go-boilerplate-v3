@@ -3,8 +3,8 @@ package controllers_v1
 import (
 	"fmt"
 	"github.com/labstack/echo/v4"
-	"github.com/sercanakmaz/go-boilerplate-v3/contexts/oms/core-api/application"
-	"github.com/sercanakmaz/go-boilerplate-v3/contexts/oms/core-api/domain/orders"
+	"github.com/sercanakmaz/go-boilerplate-v3/contexts/oms/core-api/aggregates/orders"
+	"github.com/sercanakmaz/go-boilerplate-v3/contexts/oms/core-api/use-cases"
 	orderModels "github.com/sercanakmaz/go-boilerplate-v3/models/order"
 	use_case "github.com/sercanakmaz/go-boilerplate-v3/pkg/ddd/use-case"
 	ourhttp "github.com/sercanakmaz/go-boilerplate-v3/pkg/http"
@@ -36,7 +36,7 @@ func CreateOrder(group *echo.Group, orderService orders.IOrderService) {
 
 		var (
 			command *orderModels.CreateOrderCommand
-			result  = new(use_case.UseCaseResult[*orders.Order])
+			result  = new(use_case.UseCaseResult[*orderModels.CreateOrderResponse])
 			err     error
 		)
 
@@ -44,7 +44,7 @@ func CreateOrder(group *echo.Group, orderService orders.IOrderService) {
 			panic(fmt.Errorf("%v %w", "CreateOrderCommand", ourhttp.ErrCommandBindFailed))
 		}
 
-		var handler = application.NewCreateOrderUseCaseHandler(orderService)
+		var handler = use_cases.NewCreateOrderUseCaseHandler(orderService)
 
 		if err = use_case.Handle(ctx.Request().Context(), handler, command, result); err != nil {
 			panic(fmt.Errorf("%v %w", "CreateOrderCommand", ourhttp.ErrUseCaseHandleFailed))

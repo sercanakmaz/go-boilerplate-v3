@@ -28,10 +28,10 @@ var doc = `{
         "/v1/products/": {
             "post": {
                 "consumes": [
-                    "application/json"
+                    "use-cases/json"
                 ],
                 "produces": [
-                    "application/json"
+                    "use-cases/json"
                 ],
                 "parameters": [
                     {
@@ -71,10 +71,10 @@ var doc = `{
         "/v1/products/decrease-stock/{sku}": {
             "put": {
                 "consumes": [
-                    "application/json"
+                    "use-cases/json"
                 ],
                 "produces": [
-                    "application/json"
+                    "use-cases/json"
                 ],
                 "parameters": [
                     {
@@ -120,10 +120,10 @@ var doc = `{
         "/v1/products/id/{id}": {
             "get": {
                 "consumes": [
-                    "application/json"
+                    "use-cases/json"
                 ],
                 "produces": [
-                    "application/json"
+                    "use-cases/json"
                 ],
                 "parameters": [
                     {
@@ -159,10 +159,10 @@ var doc = `{
         "/v1/products/increase-stock/{sku}": {
             "put": {
                 "consumes": [
-                    "application/json"
+                    "use-cases/json"
                 ],
                 "produces": [
-                    "application/json"
+                    "use-cases/json"
                 ],
                 "parameters": [
                     {

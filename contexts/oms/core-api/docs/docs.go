@@ -28,10 +28,10 @@ var doc = `{
         "/v1/orders/": {
             "post": {
                 "consumes": [
-                    "application/json"
+                    "use-cases/json"
                 ],
                 "produces": [
-                    "application/json"
+                    "use-cases/json"
                 ],
                 "parameters": [
                     {
@@ -71,10 +71,10 @@ var doc = `{
         "/v1/orders/orderNumber/{orderNumber}": {
             "get": {
                 "consumes": [
-                    "application/json"
+                    "use-cases/json"
                 ],
                 "produces": [
-                    "application/json"
+                    "use-cases/json"
                 ],
                 "parameters": [
                     {

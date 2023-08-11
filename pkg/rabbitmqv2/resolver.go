@@ -12,7 +12,7 @@ var (
 )
 
 func NewEventHandlerResolve(rbt *rmqc.RabbitMQ) event_handler.IEventDispatcher {
-	return event_handler.NewRabbitMQEventDispatcher(rbt)
+	return NewRabbitMQEventDispatcher(rbt)
 }
 
 func NewRabbitMQResolve(config Config) *rmqc.RabbitMQ {

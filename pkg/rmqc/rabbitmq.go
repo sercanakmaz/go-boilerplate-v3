@@ -133,7 +133,7 @@ func (rbt RabbitMQ) Publish(exchangeName, routingKey string, data interface{}) e
 		MessageId:       uuid.New().String(),
 		Timestamp:       time.Now(),
 		Body:            body,
-		ContentType:     "application/json",
+		ContentType:     "use-cases/json",
 		ContentEncoding: "UTF-8",
 	})
 }
@@ -155,7 +155,7 @@ func (rbt RabbitMQ) PublishWithCorrelationId(exchangeName, routingKey, correlati
 		CorrelationId:   correlationId,
 		Timestamp:       time.Now(),
 		Body:            body,
-		ContentType:     "application/json",
+		ContentType:     "use-cases/json",
 		ContentEncoding: "UTF-8",
 	})
 }

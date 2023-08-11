@@ -1,6 +1,9 @@
 package use_case
 
-import "context"
+import (
+	"context"
+	event_handler "github.com/sercanakmaz/go-boilerplate-v3/pkg/ddd/event-handler"
+)
 
 func Handle[H IBaseUseCaseHandler[U, R], U IBaseUseCase, R any](ctx context.Context, handler H, useCase U, result *UseCaseResult[R]) error {
 	var (
@@ -9,6 +12,8 @@ func Handle[H IBaseUseCaseHandler[U, R], U IBaseUseCase, R any](ctx context.Cont
 		middleWares   = handler.GetMiddlewares()
 		innerResult   *UseCaseResult[R]
 	)
+
+	ctx = event_handler.NewEventContext(ctx)
 
 	for _, middleWare := range middleWares {
 		if middlewareErr, ctx, useCase = middleWare.Before(ctx, useCase); middlewareErr != nil {

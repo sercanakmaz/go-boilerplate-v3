@@ -55,7 +55,7 @@ func errorPublishMessage(correlationId string, payload []byte, retryCount int, e
 		Timestamp:       time.Now(),
 		DeliveryMode:    deliveryMode,
 		ContentEncoding: "UTF-8",
-		ContentType:     "application/json",
+		ContentType:     "use-cases/json",
 	}
 }
 
@@ -121,7 +121,7 @@ func publishMessage(correlationId string, payload interface{}) (amqp.Publishing,
 		Timestamp:       time.Now(),
 		DeliveryMode:    deliveryMode,
 		ContentEncoding: "UTF-8",
-		ContentType:     "application/json",
+		ContentType:     "use-cases/json",
 	}, err
 }
 

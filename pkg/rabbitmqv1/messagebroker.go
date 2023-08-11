@@ -196,7 +196,7 @@ func publishExchangeToMessage(correlationId string, payload interface{}) (amqp.P
 		Timestamp:       time.Now(),
 		DeliveryMode:    deliveryMode,
 		ContentEncoding: "UTF-8",
-		ContentType:     "application/json",
+		ContentType:     "use-cases/json",
 	}, nil
 }
 

@@ -55,7 +55,7 @@ paths:
   /v1/products/:
     post:
       consumes:
-      - application/json
+      - use-cases/json
       parameters:
       - description: body
         in: body
@@ -65,7 +65,7 @@ paths:
           $ref: '#/definitions/product.CreateProductCommand'
           type: object
       produces:
-      - application/json
+      - use-cases/json
       responses:
         "201":
           description: Created
@@ -83,7 +83,7 @@ paths:
   /v1/products/decrease-stock/{sku}:
     put:
       consumes:
-      - application/json
+      - use-cases/json
       parameters:
       - description: SKU
         in: path
@@ -98,7 +98,7 @@ paths:
           $ref: '#/definitions/product.DecreaseProductStockCommand'
           type: object
       produces:
-      - application/json
+      - use-cases/json
       responses:
         "200":
           description: OK
@@ -115,7 +115,7 @@ paths:
   /v1/products/id/{id}:
     get:
       consumes:
-      - application/json
+      - use-cases/json
       parameters:
       - description: SKU
         in: path
@@ -123,7 +123,7 @@ paths:
         required: true
         type: string
       produces:
-      - application/json
+      - use-cases/json
       responses:
         "200":
           description: OK
@@ -140,7 +140,7 @@ paths:
   /v1/products/increase-stock/{sku}:
     put:
       consumes:
-      - application/json
+      - use-cases/json
       parameters:
       - description: SKU
         in: path
@@ -155,7 +155,7 @@ paths:
           $ref: '#/definitions/product.IncreaseProductStockCommand'
           type: object
       produces:
-      - application/json
+      - use-cases/json
       responses:
         "200":
           description: OK

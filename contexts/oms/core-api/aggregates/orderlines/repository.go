@@ -1,0 +1,59 @@
+package orderlines
+
+import (
+	"context"
+	event_handler "github.com/sercanakmaz/go-boilerplate-v3/pkg/ddd/event-handler"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
+)
+
+type IOrderLineRepository interface {
+	FindOneById(ctx context.Context, id primitive.ObjectID) (*OrderLine, error)
+	FindOneBySku(ctx context.Context, orderNumber string) (*OrderLine, error)
+	Add(ctx context.Context, orderLine *OrderLine) error
+	Update(ctx context.Context, orderLine *OrderLine) error
+}
+
+const _collectionName = "OrderLines"
+
+type orderLineRepository struct {
+	db *mongo.Database
+}
+
+func newOrderLineRepository(db *mongo.Database) IOrderLineRepository {
+	return &orderLineRepository{db: db}
+}
+
+func (repository orderLineRepository) FindOneById(ctx context.Context, id primitive.ObjectID) (*OrderLine, error) {
+	var orderLine *OrderLine
+	err := repository.db.Collection(_collectionName).FindOne(ctx, bson.M{"_id": id}).Decode(&orderLine)
+	return orderLine, err
+}
+
+func (repository orderLineRepository) FindOneBySku(ctx context.Context, sku string) (*OrderLine, error) {
+	var orderLine *OrderLine
+	err := repository.db.Collection(_collectionName).FindOne(ctx, bson.M{"Sku": sku}).Decode(&orderLine)
+	return orderLine, err
+}
+
+func (repository orderLineRepository) Add(ctx context.Context, orderLine *OrderLine) error {
+	if _, err := repository.db.Collection(_collectionName).InsertOne(ctx, &orderLine, options.InsertOne()); err != nil {
+		return err
+	}
+
+	event_handler.DispatchDomainEvents(ctx, orderLine)
+
+	return nil
+}
+
+func (repository orderLineRepository) Update(ctx context.Context, orderLine *OrderLine) error {
+	if _, err := repository.db.Collection(_collectionName).ReplaceOne(ctx, bson.M{"_id": orderLine.Id}, &orderLine); err != nil {
+		return err
+	}
+
+	event_handler.DispatchDomainEvents(ctx, orderLine)
+
+	return nil
+}
