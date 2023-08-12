@@ -1,5 +1,25 @@
 package ddd
 
+import (
+	"context"
+)
+
 type IEventDispatcher interface {
-	Dispatch(events []IBaseEvent)
+	Dispatch(ctx context.Context, event IBaseEvent) error
+}
+
+var eventDispatcherKey = "eventDispatcher"
+
+func NewEventDispatcher(ctx context.Context, dispatcher IEventDispatcher) context.Context {
+	return context.WithValue(ctx, eventDispatcherKey, dispatcher)
+}
+
+func GetEventDispatcher(ctx context.Context) IEventDispatcher {
+	var result = ctx.Value(eventDispatcherKey)
+
+	if result == nil {
+		return nil
+	}
+
+	return result.(IEventDispatcher)
 }

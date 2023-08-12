@@ -41,21 +41,12 @@ func (repository productRepository) FindOneBySku(ctx context.Context, sku string
 
 func (repository productRepository) Add(ctx context.Context, product *Product) error {
 	_, err := repository.db.Collection(_collectionName).InsertOne(ctx, &product, options.InsertOne())
-	repository.dispatchDomainEvents(product, err)
 
 	return err
 }
 
 func (repository productRepository) Update(ctx context.Context, product *Product) error {
 	_, err := repository.db.Collection(_collectionName).ReplaceOne(ctx, bson.M{"_id": product.Id}, &product)
-	repository.dispatchDomainEvents(product, err)
 
 	return err
-}
-
-func (repository productRepository) dispatchDomainEvents(product *Product, err error) {
-	if err == nil {
-		repository.eventDispatcher.Dispatch(product.GetDomainEvents())
-		product.ClearDomainEvents()
-	}
 }

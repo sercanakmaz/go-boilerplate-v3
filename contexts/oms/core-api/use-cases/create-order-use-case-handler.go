@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/sercanakmaz/go-boilerplate-v3/contexts/oms/core-api/aggregates/orderlines"
 	"github.com/sercanakmaz/go-boilerplate-v3/contexts/oms/core-api/aggregates/orders"
+	"github.com/sercanakmaz/go-boilerplate-v3/contexts/oms/core-api/infra"
 	orderModels "github.com/sercanakmaz/go-boilerplate-v3/models/order"
 	"github.com/sercanakmaz/go-boilerplate-v3/pkg/ddd"
 	"github.com/sercanakmaz/go-boilerplate-v3/pkg/mongo"
@@ -22,6 +23,7 @@ func NewCreateOrderUseCaseHandler(orderService orders.IOrderService, orderLineSe
 	}
 
 	handler.middlewares = append(handler.middlewares, &mongo.TransactionMiddleware[*orderModels.CreateOrderCommand, *orderModels.CreateOrderResponse]{})
+	handler.middlewares = append(handler.middlewares, infra.NewEventHandlerDispatcherMiddleware[*orderModels.CreateOrderCommand, *orderModels.CreateOrderResponse](orderLineService))
 
 	return handler
 }

@@ -5,11 +5,15 @@ import (
 	"github.com/sercanakmaz/go-boilerplate-v3/events/oms/orders"
 )
 
-type EventHandler struct {
+type OrderPaymentRejectedEventHandler struct {
 	orderLineService IOrderLineService
 }
 
-func (s *EventHandler) Handle(ctx context.Context, paymentRejected orders.PaymentRejected) error {
+func NewOrderPaymentRejectedEventHandler(orderLineService IOrderLineService) *OrderPaymentRejectedEventHandler {
+	return &OrderPaymentRejectedEventHandler{orderLineService: orderLineService}
+}
+
+func (s *OrderPaymentRejectedEventHandler) Handle(ctx context.Context, paymentRejected *orders.PaymentRejected) error {
 	var (
 		err        error
 		orderLines []*OrderLine

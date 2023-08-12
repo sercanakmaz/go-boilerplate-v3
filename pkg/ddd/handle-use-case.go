@@ -8,6 +8,7 @@ func HandleUseCase[H IBaseUseCaseHandler[U, R], U IBaseUseCase, R any](ctx conte
 	var (
 		handleErr     error
 		middlewareErr error
+		dispatcherErr error
 		middleWares   = handler.GetMiddlewares()
 		innerResult   *UseCaseResult[R]
 	)
@@ -23,6 +24,19 @@ func HandleUseCase[H IBaseUseCaseHandler[U, R], U IBaseUseCase, R any](ctx conte
 	handleErr, innerResult = handler.Handle(ctx, useCase)
 
 	*result = *innerResult
+
+	dispatcher := GetEventDispatcher(ctx)
+
+	if dispatcher != nil {
+		eventContext := GetEventContext(ctx)
+
+		for raisedEvent := eventContext.TakeRaised(); raisedEvent != nil; {
+			if dispatcherErr = dispatcher.Dispatch(ctx, raisedEvent); dispatcherErr != nil {
+				return dispatcherErr
+			}
+			eventContext.AddDispatched(raisedEvent)
+		}
+	}
 
 	for _, middleWare := range middleWares {
 		if middlewareErr, ctx, useCase, result = middleWare.After(ctx, useCase, handleErr, result); middlewareErr != nil {
