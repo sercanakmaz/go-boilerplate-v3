@@ -11,7 +11,7 @@ import (
 
 type IOrderLineRepository interface {
 	FindOneById(ctx context.Context, id primitive.ObjectID) (*OrderLine, error)
-	FindOneBySku(ctx context.Context, orderNumber string) (*OrderLine, error)
+	FindByOrderNumber(ctx context.Context, orderNumber string) ([]*OrderLine, error)
 	Add(ctx context.Context, orderLine *OrderLine) error
 	Update(ctx context.Context, orderLine *OrderLine) error
 }
@@ -32,10 +32,22 @@ func (repository orderLineRepository) FindOneById(ctx context.Context, id primit
 	return orderLine, err
 }
 
-func (repository orderLineRepository) FindOneBySku(ctx context.Context, sku string) (*OrderLine, error) {
-	var orderLine *OrderLine
-	err := repository.db.Collection(_collectionName).FindOne(ctx, bson.M{"Sku": sku}).Decode(&orderLine)
-	return orderLine, err
+func (repository orderLineRepository) FindByOrderNumber(ctx context.Context, orderNumber string) ([]*OrderLine, error) {
+	var (
+		err        error
+		cur        *mongo.Cursor
+		orderLines []*OrderLine
+	)
+
+	if cur, err = repository.db.Collection(_collectionName).Find(ctx, bson.M{"OrderNumber": orderNumber}); err != nil {
+		return nil, err
+	}
+
+	if err = cur.All(ctx, &orderLines); err != nil {
+		return nil, err
+	}
+
+	return orderLines, err
 }
 
 func (repository orderLineRepository) Add(ctx context.Context, orderLine *OrderLine) error {

@@ -12,6 +12,8 @@ type OrderLine struct {
 	Sku          string             `json:"sku" bson:"Sku"`
 	OrderNumber  string             `json:"orderNumber" bson:"OrderNumber"`
 	Price        shared.Money       `json:"price" bson:"Price"`
+	Status       string             `json:"status" bson:"Status"`
+	CancelReason string             `json:"cancelReason" bson:"CancelReason"`
 	domainEvents []ddd.IBaseEvent
 }
 
@@ -28,7 +30,6 @@ func (u *OrderLine) RaiseEvent(event ddd.IBaseEvent) {
 }
 
 func NewOrderLine(sku, orderNumber string, price shared.Money) *OrderLine {
-
 	var order = &OrderLine{
 		Id:          primitive.NewObjectID(),
 		Sku:         sku,
@@ -44,4 +45,16 @@ func NewOrderLine(sku, orderNumber string, price shared.Money) *OrderLine {
 	})
 
 	return order
+}
+
+func (u *OrderLine) Cancel(reason string) {
+	u.CancelReason = reason
+	u.Status = "Cancelled"
+
+	u.RaiseEvent(&orderlines.Cancelled{
+		Id:           u.Id.Hex(),
+		OrderNumber:  u.OrderNumber,
+		Status:       u.Status,
+		CancelReason: u.CancelReason,
+	})
 }
