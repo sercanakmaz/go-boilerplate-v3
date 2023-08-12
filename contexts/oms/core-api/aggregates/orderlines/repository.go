@@ -2,7 +2,7 @@ package orderlines
 
 import (
 	"context"
-	event_handler "github.com/sercanakmaz/go-boilerplate-v3/pkg/ddd/event-handler"
+	event_handler "github.com/sercanakmaz/go-boilerplate-v3/pkg/ddd"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -22,7 +22,7 @@ type orderLineRepository struct {
 	db *mongo.Database
 }
 
-func newOrderLineRepository(db *mongo.Database) IOrderLineRepository {
+func NewOrderLineRepository(db *mongo.Database) IOrderLineRepository {
 	return &orderLineRepository{db: db}
 }
 

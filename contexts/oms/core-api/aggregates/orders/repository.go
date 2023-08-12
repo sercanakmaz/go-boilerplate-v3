@@ -2,7 +2,7 @@ package orders
 
 import (
 	"context"
-	event_handler "github.com/sercanakmaz/go-boilerplate-v3/pkg/ddd/event-handler"
+	event_handler "github.com/sercanakmaz/go-boilerplate-v3/pkg/ddd"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -22,7 +22,7 @@ type orderRepository struct {
 	db *mongo.Database
 }
 
-func newOrderRepository(db *mongo.Database) IOrderRepository {
+func NewOrderRepository(db *mongo.Database) IOrderRepository {
 	return &orderRepository{db: db}
 }
 

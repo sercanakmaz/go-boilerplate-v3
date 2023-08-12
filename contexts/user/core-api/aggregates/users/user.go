@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/sercanakmaz/go-boilerplate-v3/contexts/user/core-api/aggregates"
 	userEvents "github.com/sercanakmaz/go-boilerplate-v3/events/user/users"
-	"github.com/sercanakmaz/go-boilerplate-v3/pkg/ddd/event-handler"
+	"github.com/sercanakmaz/go-boilerplate-v3/pkg/ddd"
 	"github.com/sercanakmaz/go-boilerplate-v3/pkg/string-helper"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -19,18 +19,18 @@ type User struct {
 	UserName          string                        `json:"user_name"`
 	EncryptedPassword *aggregates.EncryptedPassword `json:"encrypted_password"`
 	Roles             []*UserRole                   `json:"roles"`
-	domainEvents      []event_handler.IBaseEvent    `json:"domain_events"`
+	domainEvents      []ddd.IBaseEvent              `json:"domain_events"`
 }
 
 func (u *User) ClearDomainEvents() {
 	u.domainEvents = nil
 }
 
-func (u *User) GetDomainEvents() []event_handler.IBaseEvent {
+func (u *User) GetDomainEvents() []ddd.IBaseEvent {
 	return u.domainEvents
 }
 
-func (u *User) RaiseEvent(event event_handler.IBaseEvent) {
+func (u *User) RaiseEvent(event ddd.IBaseEvent) {
 	u.domainEvents = append(u.domainEvents, event)
 }
 

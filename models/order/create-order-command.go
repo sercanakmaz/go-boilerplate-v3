@@ -2,7 +2,7 @@ package order
 
 import (
 	"github.com/sercanakmaz/go-boilerplate-v3/models/shared"
-	use_case "github.com/sercanakmaz/go-boilerplate-v3/pkg/ddd/use-case"
+	use_case "github.com/sercanakmaz/go-boilerplate-v3/pkg/ddd"
 )
 
 type CreateOrderCommand struct {

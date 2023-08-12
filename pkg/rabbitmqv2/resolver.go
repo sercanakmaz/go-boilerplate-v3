@@ -1,7 +1,7 @@
 package rabbitmqv2
 
 import (
-	"github.com/sercanakmaz/go-boilerplate-v3/pkg/ddd/event-handler"
+	"github.com/sercanakmaz/go-boilerplate-v3/pkg/ddd"
 	"github.com/sercanakmaz/go-boilerplate-v3/pkg/rmqc"
 	"sync"
 )
@@ -11,7 +11,7 @@ var (
 	rbt  *rmqc.RabbitMQ
 )
 
-func NewEventHandlerResolve(rbt *rmqc.RabbitMQ) event_handler.IEventDispatcher {
+func NewEventHandlerResolve(rbt *rmqc.RabbitMQ) ddd.IEventDispatcher {
 	return NewRabbitMQEventDispatcher(rbt)
 }
 

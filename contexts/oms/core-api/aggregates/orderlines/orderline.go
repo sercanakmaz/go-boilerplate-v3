@@ -3,7 +3,7 @@ package orderlines
 import (
 	"github.com/sercanakmaz/go-boilerplate-v3/events/oms/orderlines"
 	"github.com/sercanakmaz/go-boilerplate-v3/models/shared"
-	"github.com/sercanakmaz/go-boilerplate-v3/pkg/ddd/event-handler"
+	"github.com/sercanakmaz/go-boilerplate-v3/pkg/ddd"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -12,18 +12,18 @@ type OrderLine struct {
 	Sku          string             `json:"sku" bson:"Sku"`
 	OrderNumber  string             `json:"orderNumber" bson:"OrderNumber"`
 	Price        shared.Money       `json:"price" bson:"Price"`
-	domainEvents []event_handler.IBaseEvent
+	domainEvents []ddd.IBaseEvent
 }
 
 func (u *OrderLine) ClearDomainEvents() {
 	u.domainEvents = nil
 }
 
-func (u *OrderLine) GetDomainEvents() []event_handler.IBaseEvent {
+func (u *OrderLine) GetDomainEvents() []ddd.IBaseEvent {
 	return u.domainEvents
 }
 
-func (u *OrderLine) RaiseEvent(event event_handler.IBaseEvent) {
+func (u *OrderLine) RaiseEvent(event ddd.IBaseEvent) {
 	u.domainEvents = append(u.domainEvents, event)
 }
 

@@ -1,4 +1,4 @@
-package event_handler
+package ddd
 
 import "context"
 

@@ -3,21 +3,22 @@ package controllers_v1
 import (
 	"fmt"
 	"github.com/labstack/echo/v4"
+	"github.com/sercanakmaz/go-boilerplate-v3/contexts/oms/core-api/aggregates/orderlines"
 	"github.com/sercanakmaz/go-boilerplate-v3/contexts/oms/core-api/aggregates/orders"
 	"github.com/sercanakmaz/go-boilerplate-v3/contexts/oms/core-api/use-cases"
 	orderModels "github.com/sercanakmaz/go-boilerplate-v3/models/order"
-	use_case "github.com/sercanakmaz/go-boilerplate-v3/pkg/ddd/use-case"
+	"github.com/sercanakmaz/go-boilerplate-v3/pkg/ddd"
 	ourhttp "github.com/sercanakmaz/go-boilerplate-v3/pkg/http"
 	"github.com/sercanakmaz/go-boilerplate-v3/pkg/middlewares"
 	string_helper "github.com/sercanakmaz/go-boilerplate-v3/pkg/string-helper"
 	"net/http"
 )
 
-func NewOrderController(e *echo.Echo, orderService orders.IOrderService, httpErrorHandler middlewares.HttpErrorHandler) {
+func NewOrderController(e *echo.Echo, orderService orders.IOrderService, orderLineService orderlines.IOrderLineService, httpErrorHandler middlewares.HttpErrorHandler) {
 	v1 := e.Group("/v1/orders/")
 
-	CreateOrder(v1, orderService)
-	GetOrderByOrderNumber(v1, orderService)
+	CreateOrder(v1, orderService, orderLineService)
+	GetOrderByOrderNumber(v1, orderService, orderLineService)
 
 	httpErrorHandler.Add(string_helper.ErrIsNullOrEmpty, http.StatusBadRequest)
 	httpErrorHandler.Add(ourhttp.ErrCommandBindFailed, http.StatusBadRequest)
@@ -31,12 +32,12 @@ func NewOrderController(e *echo.Echo, orderService orders.IOrderService, httpErr
 // @Failure 400 {string} string
 // @Failure 500 {string} string
 // @Router /v1/orders/ [post]
-func CreateOrder(group *echo.Group, orderService orders.IOrderService) {
+func CreateOrder(group *echo.Group, orderService orders.IOrderService, orderLineService orderlines.IOrderLineService) {
 	group.POST("", func(ctx echo.Context) error {
 
 		var (
 			command *orderModels.CreateOrderCommand
-			result  = new(use_case.UseCaseResult[*orderModels.CreateOrderResponse])
+			result  = new(ddd.UseCaseResult[*orderModels.CreateOrderResponse])
 			err     error
 		)
 
@@ -44,13 +45,13 @@ func CreateOrder(group *echo.Group, orderService orders.IOrderService) {
 			panic(fmt.Errorf("%v %w", "CreateOrderCommand", ourhttp.ErrCommandBindFailed))
 		}
 
-		var handler = use_cases.NewCreateOrderUseCaseHandler(orderService)
+		var handler = use_cases.NewCreateOrderUseCaseHandler(orderService, orderLineService)
 
-		if err = use_case.Handle(ctx.Request().Context(), handler, command, result); err != nil {
+		if err = ddd.HandleUseCase(ctx.Request().Context(), handler, command, result); err != nil {
 			panic(fmt.Errorf("%v %w", "CreateOrderCommand", ourhttp.ErrUseCaseHandleFailed))
 		}
 
-		return ctx.JSON(result.HttpStatusCode, result.Content)
+		return ctx.JSON(http.StatusCreated, result.Content)
 	})
 }
 
@@ -62,7 +63,7 @@ func CreateOrder(group *echo.Group, orderService orders.IOrderService) {
 // @Failure 400 {string} string
 // @Failure 500 {string} string
 // @Router /v1/orders/orderNumber/{orderNumber} [get]
-func GetOrderByOrderNumber(group *echo.Group, orderService orders.IOrderService) {
+func GetOrderByOrderNumber(group *echo.Group, orderService orders.IOrderService, orderLineService orderlines.IOrderLineService) {
 	group.GET("orderNumber/:orderNumber", func(ctx echo.Context) error {
 
 		var (

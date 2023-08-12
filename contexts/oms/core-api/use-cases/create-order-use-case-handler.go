@@ -5,20 +5,20 @@ import (
 	"github.com/sercanakmaz/go-boilerplate-v3/contexts/oms/core-api/aggregates/orderlines"
 	"github.com/sercanakmaz/go-boilerplate-v3/contexts/oms/core-api/aggregates/orders"
 	orderModels "github.com/sercanakmaz/go-boilerplate-v3/models/order"
-	use_case "github.com/sercanakmaz/go-boilerplate-v3/pkg/ddd/use-case"
+	"github.com/sercanakmaz/go-boilerplate-v3/pkg/ddd"
 	"github.com/sercanakmaz/go-boilerplate-v3/pkg/mongo"
-	"net/http"
 )
 
 type CreateOrderUseCaseHandler struct {
 	orderService     orders.IOrderService
 	orderLineService orderlines.IOrderLineService
-	middlewares      []use_case.IBaseUseCaseMiddleware[*orderModels.CreateOrderCommand, *orderModels.CreateOrderResponse]
+	middlewares      []ddd.IBaseUseCaseMiddleware[*orderModels.CreateOrderCommand, *orderModels.CreateOrderResponse]
 }
 
-func NewCreateOrderUseCaseHandler(orderService orders.IOrderService) *CreateOrderUseCaseHandler {
+func NewCreateOrderUseCaseHandler(orderService orders.IOrderService, orderLineService orderlines.IOrderLineService) *CreateOrderUseCaseHandler {
 	var handler = &CreateOrderUseCaseHandler{
-		orderService: orderService,
+		orderService:     orderService,
+		orderLineService: orderLineService,
 	}
 
 	handler.middlewares = append(handler.middlewares, &mongo.TransactionMiddleware[*orderModels.CreateOrderCommand, *orderModels.CreateOrderResponse]{})
@@ -26,11 +26,11 @@ func NewCreateOrderUseCaseHandler(orderService orders.IOrderService) *CreateOrde
 	return handler
 }
 
-func (self *CreateOrderUseCaseHandler) GetMiddlewares() []use_case.IBaseUseCaseMiddleware[*orderModels.CreateOrderCommand, *orderModels.CreateOrderResponse] {
+func (self *CreateOrderUseCaseHandler) GetMiddlewares() []ddd.IBaseUseCaseMiddleware[*orderModels.CreateOrderCommand, *orderModels.CreateOrderResponse] {
 	return self.middlewares
 }
 
-func (self *CreateOrderUseCaseHandler) Handle(ctx context.Context, command *orderModels.CreateOrderCommand) (error, *use_case.UseCaseResult[*orderModels.CreateOrderResponse]) {
+func (self *CreateOrderUseCaseHandler) Handle(ctx context.Context, command *orderModels.CreateOrderCommand) (error, *ddd.UseCaseResult[*orderModels.CreateOrderResponse]) {
 
 	var (
 		err        error
@@ -41,7 +41,7 @@ func (self *CreateOrderUseCaseHandler) Handle(ctx context.Context, command *orde
 	if order, err = self.orderService.AddNew(ctx,
 		command.OrderNumber,
 		command.Price); err != nil {
-		return err, use_case.NewUseCaseResult[*orderModels.CreateOrderResponse](http.StatusInternalServerError)
+		return err, nil
 	}
 
 	for _, line := range command.OrderLines {
@@ -51,11 +51,11 @@ func (self *CreateOrderUseCaseHandler) Handle(ctx context.Context, command *orde
 			line.Sku,
 			command.OrderNumber,
 			line.Price); err != nil {
-			return err, use_case.NewUseCaseResult[*orderModels.CreateOrderResponse](http.StatusInternalServerError)
+			return err, nil
 		}
 
 		orderLines = append(orderLines, orderLine)
 	}
 
-	return nil, use_case.NewUseCaseResultWithContent[*orderModels.CreateOrderResponse](http.StatusCreated, orderModels.NewCreateOrderResponse(order, orderLines))
+	return nil, ddd.NewUseCaseResultWithContent[*orderModels.CreateOrderResponse](orderModels.NewCreateOrderResponse(order, orderLines))
 }

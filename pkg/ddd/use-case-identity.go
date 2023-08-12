@@ -1,4 +1,4 @@
-package use_case
+package ddd
 
 type UseCaseIdentity struct {
 }

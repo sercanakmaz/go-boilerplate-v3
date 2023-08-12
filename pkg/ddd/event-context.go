@@ -1,8 +1,7 @@
-package event_handler
+package ddd
 
 import (
 	"context"
-	"github.com/sercanakmaz/go-boilerplate-v3/pkg/ddd"
 	"sync"
 )
 
@@ -32,7 +31,7 @@ func GetEventContext(ctx context.Context) *EventContext {
 	return result.(*EventContext)
 }
 
-func DispatchDomainEvents(ctx context.Context, order ddd.IAggregateRoot) {
+func DispatchDomainEvents(ctx context.Context, order IAggregateRoot) {
 	var eventContext = GetEventContext(ctx)
 
 	if eventContext == nil {
