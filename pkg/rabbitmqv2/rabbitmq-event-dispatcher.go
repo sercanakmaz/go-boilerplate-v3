@@ -13,8 +13,8 @@ func NewRabbitMQEventDispatcher(rbt *rmqc.RabbitMQ) ddd.IEventDispatcher {
 	return &RabbitMQEventDispatcher{rbt: rbt}
 }
 
-func (handler RabbitMQEventDispatcher) Dispatch(events []ddd.IBaseEvent) {
+func (dispatcher RabbitMQEventDispatcher) Dispatch(events []ddd.IBaseEvent) {
 	for _, event := range events {
-		handler.rbt.Publish(event.ExchangeName(), "", event)
+		dispatcher.rbt.Publish(event.ExchangeName(), "", event)
 	}
 }

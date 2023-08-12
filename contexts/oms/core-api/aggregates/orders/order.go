@@ -8,12 +8,13 @@ import (
 )
 
 type Order struct {
-	Id           primitive.ObjectID `json:"id" bson:"_id"`
-	OrderNumber  string             `json:"orderNumber" bson:"OrderNumber"`
-	Price        shared.Money       `json:"price" bson:"Price"`
-	FinalPrice   shared.Money       `json:"finalPrice" bson:"FinalPrice"`
-	Vat          float64            `json:"vat" bson:"vat"`
-	domainEvents []ddd.IBaseEvent
+	Id                  primitive.ObjectID `json:"id" bson:"_id"`
+	OrderNumber         string             `json:"orderNumber" bson:"OrderNumber"`
+	Price               shared.Money       `json:"price" bson:"Price"`
+	FinalPrice          shared.Money       `json:"finalPrice" bson:"FinalPrice"`
+	PaymentStatus       string             `json:"paymentStatus" bson:"PaymentStatus"`
+	PaymentRejectReason string             `json:"paymentRejectReason" bson:"PaymentRejectReason"`
+	domainEvents        []ddd.IBaseEvent
 }
 
 func (u *Order) ClearDomainEvents() {
@@ -44,4 +45,16 @@ func NewOrder(orderNumber string, price shared.Money) *Order {
 	})
 
 	return order
+}
+
+func (u *Order) RejectPayment(reason string) {
+	u.PaymentRejectReason = reason
+	u.PaymentStatus = "PaymentRejected"
+
+	u.RaiseEvent(&orders.PaymentRejected{
+		Id:                  u.Id.Hex(),
+		OrderNumber:         u.OrderNumber,
+		PaymentRejectReason: u.PaymentRejectReason,
+		PaymentStatus:       u.PaymentStatus,
+	})
 }
