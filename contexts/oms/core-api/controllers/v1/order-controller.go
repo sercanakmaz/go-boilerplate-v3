@@ -19,6 +19,7 @@ func NewOrderController(e *echo.Echo, orderService orders.IOrderService, orderLi
 
 	CreateOrder(v1, orderService, orderLineService)
 	GetOrderByOrderNumber(v1, orderService, orderLineService)
+	RejectPayment(v1, orderService, orderLineService)
 
 	httpErrorHandler.Add(string_helper.ErrIsNullOrEmpty, http.StatusBadRequest)
 	httpErrorHandler.Add(ourhttp.ErrCommandBindFailed, http.StatusBadRequest)
@@ -55,6 +56,39 @@ func CreateOrder(group *echo.Group, orderService orders.IOrderService, orderLine
 	})
 }
 
+// RejectPayment godoc
+// @Accept  json
+// @Produce  json
+// @Param orderNumber path string true "Order Number"
+// @Param c body order.RejectOrderPaymentCommand true "body"
+// @Failure 400 {string} string
+// @Failure 500 {string} string
+// @Router /v1/orders/{orderNumber}/reject-payment [put]
+func RejectPayment(group *echo.Group, orderService orders.IOrderService, orderLineService orderlines.IOrderLineService) {
+	group.PUT(":orderNumber/reject-payment", func(ctx echo.Context) error {
+
+		var (
+			command *orderModels.RejectOrderPaymentCommand
+			result  = new(ddd.UseCaseResult[string])
+			err     error
+		)
+
+		if err = ctx.Bind(&command); err != nil {
+			panic(fmt.Errorf("%v %w", "RejectOrderPaymentCommand", ourhttp.ErrCommandBindFailed))
+		}
+
+		command.OrderNumber = ctx.Param("orderNumber")
+
+		var handler = use_cases.NewRejectOrderPaymentUseCaseHandler(orderService, orderLineService)
+
+		if err = ddd.HandleUseCase(ctx.Request().Context(), handler, command, result); err != nil {
+			panic(fmt.Errorf("%v %w", "RejectOrderPaymentCommand", ourhttp.ErrUseCaseHandleFailed))
+		}
+
+		return ctx.String(http.StatusNoContent, result.Content)
+	})
+}
+
 // GetOrderByOrderNumber godoc
 // @Accept  json
 // @Produce  json
@@ -71,8 +105,8 @@ func GetOrderByOrderNumber(group *echo.Group, orderService orders.IOrderService,
 			err   error
 		)
 
-		id := ctx.Param("id")
-		if order, err = orderService.GetByOrderNumber(ctx.Request().Context(), id); err != nil {
+		orderNumber := ctx.Param("orderNumber")
+		if order, err = orderService.GetByOrderNumber(ctx.Request().Context(), orderNumber); err != nil {
 			return ctx.String(http.StatusBadRequest, err.Error())
 		}
 

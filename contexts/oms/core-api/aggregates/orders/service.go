@@ -8,6 +8,7 @@ import (
 type (
 	IOrderService interface {
 		AddNew(ctx context.Context, orderNumber string, price shared.Money) (*Order, error)
+		RejectPayment(ctx context.Context, orderNumber string, paymentRejectReason string) (*Order, error)
 		GetByOrderNumber(ctx context.Context, orderNumber string) (*Order, error)
 	}
 	orderService struct {

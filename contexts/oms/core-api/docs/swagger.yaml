@@ -1,39 +1,60 @@
-basePath: '{{.BasePath}}'
 definitions:
   order.CreateOrderCommand:
     properties:
+      orderLines:
+        items:
+          $ref: '#/definitions/order.OrderLine'
+        type: array
       orderNumber:
         type: string
       price:
+        $ref: '#/definitions/shared.Money'
+    type: object
+  order.OrderLine:
+    properties:
+      id:
+        type: string
+      price:
+        $ref: '#/definitions/shared.Money'
+      sku:
+        type: string
+    type: object
+  order.RejectOrderPaymentCommand:
+    properties:
+      orderNumber:
+        type: string
+      rejectReason:
         type: string
     type: object
   orders.Order:
     properties:
-      domainEvents:
-        type: string
       finalPrice:
-        type: string
+        $ref: '#/definitions/shared.Money'
       id:
         type: string
       orderNumber:
         type: string
-      price:
+      paymentRejectReason:
         type: string
-      vat:
+      paymentStatus:
+        type: string
+      price:
+        $ref: '#/definitions/shared.Money'
+    type: object
+  shared.Money:
+    properties:
+      currencyCode:
+        type: string
+      value:
         type: number
     type: object
-host: '{{.Host}}'
 info:
   contact: {}
-  description: '{{.Description}}'
-  license: {}
-  title: '{{.Title}}'
-  version: '{{.Version}}'
 paths:
   /v1/orders/:
     post:
       consumes:
-      - use-cases/json
+      - application/json
       parameters:
       - description: body
         in: body
@@ -41,15 +62,40 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/order.CreateOrderCommand'
-          type: object
       produces:
-      - use-cases/json
+      - application/json
       responses:
         "201":
           description: Created
           schema:
             $ref: '#/definitions/orders.Order'
-            type: object
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+  /v1/orders/{orderNumber}/reject-payment:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Order Number
+        in: path
+        name: orderNumber
+        required: true
+        type: string
+      - description: body
+        in: body
+        name: c
+        required: true
+        schema:
+          $ref: '#/definitions/order.RejectOrderPaymentCommand'
+      produces:
+      - application/json
+      responses:
         "400":
           description: Bad Request
           schema:
@@ -61,7 +107,7 @@ paths:
   /v1/orders/orderNumber/{orderNumber}:
     get:
       consumes:
-      - use-cases/json
+      - application/json
       parameters:
       - description: Order Number
         in: path
@@ -69,7 +115,7 @@ paths:
         required: true
         type: string
       produces:
-      - use-cases/json
+      - application/json
       responses:
         "200":
           description: OK
