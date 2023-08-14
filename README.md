@@ -1,49 +1,40 @@
-İş Listesi
-- Event Handlers
-- Http Logging Middleware
-- Echo Logging Middleware
-- Command Validation
-- RabbitMQ Consumer & Publisher
-- RabbitMQ Logging Middleware
-- App Config Management
-- App Secret Management
-- Outbox Pattern
-- APM
-- Sidecar Service Applications (Config, Localization, Feaute Toggle)
-- Sidecar Service Implementation
-- Dependecy Injection?
-- Packaging & Dependecy validation at build time
-- Comprehensive documentation & readme
+## Remaining Tasks
 
-pkg
-anticorruption / http, api vb external data sources
-events / her domain'in eventi
-model / her domain'in modelleri
-domains
-    Açıklama:
-        - ddd, hexagonal packaging style. n-tier değil.
-        - hiç bir domain başka bir domain'e erişemez.
-        - eğer oms
-    - oms
-        - domain / aggregates
-        - core domain: siparişi oluşturduğun ve statülerini değiştiriğin ana servis
-        - supporting domain: siparişin kargo durumunu beslediğin yardımcı servis 
-        - generic domain: siparişin tüm durumları ile ilgili sms vb bilgilendirme yaptığın servis
-    - product
-    - delivery
-    - merchant
+### 1.DDD Package
 
+- [x] Aggregate, Events
+- [x] Event Handlers
+- [x] Use Case Handlers
 
-business
-    X modeli=entity
-    A modeli
-data
-    X modeli=entity
-    A modeli multiple entities
-application
-    ihtiyaç Z modeli yoksa X modeli=entity
-    ihtiyaç varsa B modeli yoksa A modeli 
+### 2. Cross Cutting Concerns
+- [x] Http Logging Middleware
+- [ ] Authentication
+- [ ] Authorization
+- [ ] Exception Handling
+- [ ] App Config Management
+- [ ] App Secret Management
+- [ ] APM
+- [ ] Logging
+- [ ] Sidecar Service Applications 
+  - [ ] Config
+  - [ ] Localization
+  - [ ] Feaute Toggle
+ 
+### 3. RESTful API 
 
+- [ ] Command Validation
+- [ ] Controller base classes
+- [x] Echo Logging Middleware
 
-Event Handler senkron = hata durumunda revert yapılır
-Event Consumer asenkron = hata durumunda revert yapılmaz, error queue'ya düşer
+### 4. Documentation
+- [ ] Comprehensive documentation & readme
+- [ ] Packaging & Dependecy validation at build time
+
+### 5. Other
+- [ ] MySQL example
+- [ ] Postgres example
+- [ ] RabbitMQ Consumer & Publisher
+- [ ] RabbitMQ Logging Middleware
+- [ ] Outbox Pattern
+- [ ] Dependecy Injection
+
