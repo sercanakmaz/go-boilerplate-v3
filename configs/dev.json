@@ -1,6 +1,6 @@
 {
   "Host": {
-    "Port": 8080
+    "Port": 8000
   },
   "Mongo": {
     "MongoDb": "mongodb://mongo0:30000,mongo1:30001,mongo2:30002/?replicaSet=rs0",

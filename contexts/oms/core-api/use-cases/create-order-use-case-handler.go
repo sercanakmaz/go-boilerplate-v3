@@ -7,22 +7,25 @@ import (
 	"github.com/sercanakmaz/go-boilerplate-v3/contexts/oms/core-api/infra"
 	orderModels "github.com/sercanakmaz/go-boilerplate-v3/models/order"
 	"github.com/sercanakmaz/go-boilerplate-v3/pkg/ddd"
-	"github.com/sercanakmaz/go-boilerplate-v3/pkg/mongo"
+	ourMongo "github.com/sercanakmaz/go-boilerplate-v3/pkg/mongo"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type CreateOrderUseCaseHandler struct {
+	client           *mongo.Client
 	orderService     orders.IOrderService
 	orderLineService orderlines.IOrderLineService
 	middlewares      []ddd.IBaseUseCaseMiddleware[*orderModels.CreateOrderCommand, *orderModels.CreateOrderResponse]
 }
 
-func NewCreateOrderUseCaseHandler(orderService orders.IOrderService, orderLineService orderlines.IOrderLineService) *CreateOrderUseCaseHandler {
+func NewCreateOrderUseCaseHandler(client *mongo.Client, orderService orders.IOrderService, orderLineService orderlines.IOrderLineService) *CreateOrderUseCaseHandler {
 	var handler = &CreateOrderUseCaseHandler{
+		client:           client,
 		orderService:     orderService,
 		orderLineService: orderLineService,
 	}
 
-	handler.middlewares = append(handler.middlewares, &mongo.TransactionMiddleware[*orderModels.CreateOrderCommand, *orderModels.CreateOrderResponse]{})
+	handler.middlewares = append(handler.middlewares, ourMongo.NewTransactionMiddleware[*orderModels.CreateOrderCommand, *orderModels.CreateOrderResponse](client))
 	handler.middlewares = append(handler.middlewares, infra.NewEventHandlerDispatcherMiddleware[*orderModels.CreateOrderCommand, *orderModels.CreateOrderResponse](orderLineService))
 
 	return handler

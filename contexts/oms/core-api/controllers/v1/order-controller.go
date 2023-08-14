@@ -11,15 +11,19 @@ import (
 	ourhttp "github.com/sercanakmaz/go-boilerplate-v3/pkg/http"
 	"github.com/sercanakmaz/go-boilerplate-v3/pkg/middlewares"
 	string_helper "github.com/sercanakmaz/go-boilerplate-v3/pkg/string-helper"
+	"go.mongodb.org/mongo-driver/mongo"
 	"net/http"
 )
 
-func NewOrderController(e *echo.Echo, orderService orders.IOrderService, orderLineService orderlines.IOrderLineService, httpErrorHandler middlewares.HttpErrorHandler) {
+type OrderController struct {
+}
+
+func NewOrderController(e *echo.Echo, client *mongo.Client, orderService orders.IOrderService, orderLineService orderlines.IOrderLineService, httpErrorHandler middlewares.HttpErrorHandler) {
 	v1 := e.Group("/v1/orders/")
 
-	CreateOrder(v1, orderService, orderLineService)
-	GetOrderByOrderNumber(v1, orderService, orderLineService)
-	RejectPayment(v1, orderService, orderLineService)
+	CreateOrder(v1, client, orderService, orderLineService)
+	GetOrderByOrderNumber(v1, client, orderService, orderLineService)
+	RejectPayment(v1, client, orderService, orderLineService)
 
 	httpErrorHandler.Add(string_helper.ErrIsNullOrEmpty, http.StatusBadRequest)
 	httpErrorHandler.Add(ourhttp.ErrCommandBindFailed, http.StatusBadRequest)
@@ -33,7 +37,7 @@ func NewOrderController(e *echo.Echo, orderService orders.IOrderService, orderLi
 // @Failure 400 {string} string
 // @Failure 500 {string} string
 // @Router /v1/orders/ [post]
-func CreateOrder(group *echo.Group, orderService orders.IOrderService, orderLineService orderlines.IOrderLineService) {
+func CreateOrder(group *echo.Group, client *mongo.Client, orderService orders.IOrderService, orderLineService orderlines.IOrderLineService) {
 	group.POST("", func(ctx echo.Context) error {
 
 		var (
@@ -46,7 +50,7 @@ func CreateOrder(group *echo.Group, orderService orders.IOrderService, orderLine
 			panic(fmt.Errorf("%v %w", "CreateOrderCommand", ourhttp.ErrCommandBindFailed))
 		}
 
-		var handler = use_cases.NewCreateOrderUseCaseHandler(orderService, orderLineService)
+		var handler = use_cases.NewCreateOrderUseCaseHandler(client, orderService, orderLineService)
 
 		if err = ddd.HandleUseCase(ctx.Request().Context(), handler, command, result); err != nil {
 			panic(fmt.Errorf("%v %w", "CreateOrderCommand", ourhttp.ErrUseCaseHandleFailed))
@@ -64,7 +68,7 @@ func CreateOrder(group *echo.Group, orderService orders.IOrderService, orderLine
 // @Failure 400 {string} string
 // @Failure 500 {string} string
 // @Router /v1/orders/{orderNumber}/reject-payment [put]
-func RejectPayment(group *echo.Group, orderService orders.IOrderService, orderLineService orderlines.IOrderLineService) {
+func RejectPayment(group *echo.Group, client *mongo.Client, orderService orders.IOrderService, orderLineService orderlines.IOrderLineService) {
 	group.PUT(":orderNumber/reject-payment", func(ctx echo.Context) error {
 
 		var (
@@ -79,7 +83,7 @@ func RejectPayment(group *echo.Group, orderService orders.IOrderService, orderLi
 
 		command.OrderNumber = ctx.Param("orderNumber")
 
-		var handler = use_cases.NewRejectOrderPaymentUseCaseHandler(orderService, orderLineService)
+		var handler = use_cases.NewRejectOrderPaymentUseCaseHandler(client, orderService, orderLineService)
 
 		if err = ddd.HandleUseCase(ctx.Request().Context(), handler, command, result); err != nil {
 			panic(fmt.Errorf("%v %w", "RejectOrderPaymentCommand", ourhttp.ErrUseCaseHandleFailed))
@@ -97,7 +101,7 @@ func RejectPayment(group *echo.Group, orderService orders.IOrderService, orderLi
 // @Failure 400 {string} string
 // @Failure 500 {string} string
 // @Router /v1/orders/orderNumber/{orderNumber} [get]
-func GetOrderByOrderNumber(group *echo.Group, orderService orders.IOrderService, orderLineService orderlines.IOrderLineService) {
+func GetOrderByOrderNumber(group *echo.Group, client *mongo.Client, orderService orders.IOrderService, orderLineService orderlines.IOrderLineService) {
 	group.GET("orderNumber/:orderNumber", func(ctx echo.Context) error {
 
 		var (

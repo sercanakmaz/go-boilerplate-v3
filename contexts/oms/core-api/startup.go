@@ -45,7 +45,7 @@ func Init(cmd *cobra.Command, args []string) error {
 	}))
 	e.GET("/swagger/*", middlewares.WrapHandler)
 
-	var mongoDb = mongo.NewMongoDb(cfg.Mongo)
+	var mongoDb, mongoClient = mongo.NewMongoDb(cfg.Mongo)
 
 	var orderRepository = orders.NewOrderRepository(mongoDb)
 	var orderLineRepository = orderlines.NewOrderLineRepository(mongoDb)
@@ -57,7 +57,7 @@ func Init(cmd *cobra.Command, args []string) error {
 	//	return userService.AuthUser(context.Background(), username, password)
 	//}))
 
-	controllers_v1.NewOrderController(e, orderService, orderLineService, httpErrorHandler)
+	controllers_v1.NewOrderController(e, mongoClient, orderService, orderLineService, httpErrorHandler)
 
 	return e.Start(fmt.Sprintf(":%v", cfg.Host.Port))
 }

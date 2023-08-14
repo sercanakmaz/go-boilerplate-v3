@@ -11,7 +11,7 @@ type EventHandlerDispatcher struct {
 	orderLineService orderlines.IOrderLineService
 }
 
-func NewEventHandlerDispatcher(orderLineService orderlines.IOrderLineService) *EventHandlerDispatcher {
+func NewEventHandlerDispatcher(orderLineService orderlines.IOrderLineService) ddd.IEventDispatcher {
 	return &EventHandlerDispatcher{orderLineService: orderLineService}
 }
 

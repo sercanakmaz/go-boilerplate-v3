@@ -2,19 +2,52 @@ package mongo
 
 import (
 	"context"
-	"fmt"
 	"github.com/sercanakmaz/go-boilerplate-v3/pkg/ddd"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
-type TransactionMiddleware[T ddd.IBaseUseCase, R any] struct {
+var sessionContextKey = "mongoSessionContext"
+
+func GetSessionContext(ctx context.Context) mongo.SessionContext {
+	return ctx.Value(sessionContextKey).(mongo.SessionContext)
 }
 
-func (self *TransactionMiddleware[T, R]) Before(ctx context.Context, useCase T) (error, context.Context, T) {
-	ctx = context.WithValue(ctx, "transaction", "mongostart")
+type TransactionMiddleware[T ddd.IBaseUseCase, R any] struct {
+	client  *mongo.Client
+	session mongo.Session
+	sc      mongo.SessionContext
+}
+
+func NewTransactionMiddleware[T ddd.IBaseUseCase, R any](client *mongo.Client) *TransactionMiddleware[T, R] {
+	return &TransactionMiddleware[T, R]{client: client}
+}
+
+func (s *TransactionMiddleware[T, R]) Before(ctx context.Context, useCase T) (error, context.Context, T) {
+	var (
+		err error
+	)
+
+	if s.session, err = s.client.StartSession(); err != nil {
+		return err, ctx, useCase
+	}
+
+	if err = s.session.StartTransaction(); err != nil {
+		return err, ctx, useCase
+	}
+
+	s.sc = mongo.NewSessionContext(ctx, s.session)
+
+	ctx = context.WithValue(ctx, sessionContextKey, s.sc)
+
 	return nil, ctx, useCase
 }
-func (self *TransactionMiddleware[T, R]) After(ctx context.Context, useCase T, err error, result *ddd.UseCaseResult[R]) (error, context.Context, T, *ddd.UseCaseResult[R]) {
-	fmt.Println(ctx.Value("transaction"))
-	ctx = context.WithValue(ctx, "transaction", "mongoend")
+
+func (s *TransactionMiddleware[T, R]) After(ctx context.Context, useCase T, err error, result *ddd.UseCaseResult[R]) (error, context.Context, T, *ddd.UseCaseResult[R]) {
+	if err = s.session.CommitTransaction(s.sc); err != nil {
+		return err, ctx, useCase, result
+	}
+
+	s.session.EndSession(ctx)
+
 	return nil, ctx, useCase, result
 }

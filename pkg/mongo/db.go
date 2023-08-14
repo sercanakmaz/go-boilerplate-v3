@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func NewMongoDb(config Config) *mongo.Database {
+func NewMongoDb(config Config) (*mongo.Database, *mongo.Client) {
 
 	client, err := mongo.NewClient(options.Client().ApplyURI(config.MongoDb))
 
@@ -22,5 +22,5 @@ func NewMongoDb(config Config) *mongo.Database {
 		panic(err)
 	}
 
-	return client.Database(config.Database)
+	return client.Database(config.Database), client
 }

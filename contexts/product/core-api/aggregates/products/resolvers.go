@@ -8,7 +8,8 @@ import (
 func NewProductRepositoryResolve(rabbitMQConfig rabbitmqv2.Config, mongoConfig mongo.Config) IProductRepository {
 	rbt := rabbitmqv2.NewRabbitMQResolve(rabbitMQConfig)
 	eventHandler := rabbitmqv2.NewEventHandlerResolve(rbt)
-	return newProductRepository(mongo.NewMongoDb(mongoConfig), eventHandler)
+	db, _ := mongo.NewMongoDb(mongoConfig)
+	return newProductRepository(db, eventHandler)
 }
 
 func NewProductServiceResolve(rabbitMQConfig rabbitmqv2.Config, mongoConfig mongo.Config) IProductService {
