@@ -26,7 +26,7 @@ func NewCreateOrderUseCaseHandler(client *mongo.Client, orderService orders.IOrd
 	}
 
 	handler.middlewares = append(handler.middlewares, ourMongo.NewTransactionMiddleware[*orderModels.CreateOrderCommand, *orderModels.CreateOrderResponse](client))
-	handler.middlewares = append(handler.middlewares, infra.NewEventHandlerDispatcherMiddleware[*orderModels.CreateOrderCommand, *orderModels.CreateOrderResponse](orderLineService))
+	handler.middlewares = append(handler.middlewares, ddd.NewEventHandlerDispatcherMiddleware[*orderModels.CreateOrderCommand, *orderModels.CreateOrderResponse](infra.NewEventHandlerDispatcher(orderLineService)))
 
 	return handler
 }

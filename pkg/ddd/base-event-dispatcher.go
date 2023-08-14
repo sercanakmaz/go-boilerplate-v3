@@ -10,7 +10,7 @@ type IEventDispatcher interface {
 
 var eventDispatcherKey = "eventDispatcher"
 
-func NewEventDispatcher(ctx context.Context, dispatcher IEventDispatcher) context.Context {
+func newEventDispatcher(ctx context.Context, dispatcher IEventDispatcher) context.Context {
 	return context.WithValue(ctx, eventDispatcherKey, dispatcher)
 }
 
