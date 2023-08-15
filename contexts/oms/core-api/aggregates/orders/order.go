@@ -46,15 +46,3 @@ func NewOrder(orderNumber string, price shared.Money) *Order {
 
 	return order
 }
-
-func (u *Order) RejectPayment(reason string) {
-	u.PaymentRejectReason = reason
-	u.PaymentStatus = "PaymentRejected"
-
-	u.RaiseEvent(&orders.PaymentRejected{
-		Id:                  u.Id.Hex(),
-		OrderNumber:         u.OrderNumber,
-		PaymentRejectReason: u.PaymentRejectReason,
-		PaymentStatus:       u.PaymentStatus,
-	})
-}

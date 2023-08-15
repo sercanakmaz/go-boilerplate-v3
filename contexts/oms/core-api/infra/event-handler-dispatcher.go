@@ -3,7 +3,6 @@ package infra
 import (
 	"context"
 	"github.com/sercanakmaz/go-boilerplate-v3/contexts/oms/core-api/aggregates/orderlines"
-	"github.com/sercanakmaz/go-boilerplate-v3/events/oms/orders"
 	"github.com/sercanakmaz/go-boilerplate-v3/pkg/ddd"
 )
 
@@ -17,10 +16,8 @@ func NewEventHandlerDispatcher(orderLineService orderlines.IOrderLineService) dd
 
 func (s *EventHandlerDispatcher) Dispatch(ctx context.Context, event ddd.IBaseEvent) error {
 	switch event.ExchangeName() {
-	case "Orders:PaymentRejected":
-		var h = orderlines.NewOrderPaymentRejectedEventHandler(s.orderLineService)
-
-		return h.Handle(ctx, event.(*orders.PaymentRejected))
+	case "Orders:Created":
+		return nil
 	}
 
 	// TODO: Add Outbox Pattern
