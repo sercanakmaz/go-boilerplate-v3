@@ -19,13 +19,6 @@ definitions:
       sku:
         type: string
     type: object
-  order.RejectOrderPaymentCommand:
-    properties:
-      orderNumber:
-        type: string
-      rejectReason:
-        type: string
-    type: object
   orders.Order:
     properties:
       finalPrice:
@@ -69,33 +62,6 @@ paths:
           description: Created
           schema:
             $ref: '#/definitions/orders.Order'
-        "400":
-          description: Bad Request
-          schema:
-            type: string
-        "500":
-          description: Internal Server Error
-          schema:
-            type: string
-  /v1/orders/{orderNumber}/reject-payment:
-    put:
-      consumes:
-      - application/json
-      parameters:
-      - description: Order Number
-        in: path
-        name: orderNumber
-        required: true
-        type: string
-      - description: body
-        in: body
-        name: c
-        required: true
-        schema:
-          $ref: '#/definitions/order.RejectOrderPaymentCommand'
-      produces:
-      - application/json
-      responses:
         "400":
           description: Bad Request
           schema:

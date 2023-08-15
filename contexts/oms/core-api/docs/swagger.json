@@ -83,48 +83,6 @@
                     }
                 }
             }
-        },
-        "/v1/orders/{orderNumber}/reject-payment": {
-            "put": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Order Number",
-                        "name": "orderNumber",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "body",
-                        "name": "c",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/order.RejectOrderPaymentCommand"
-                        }
-                    }
-                ],
-                "responses": {
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
         }
     },
     "definitions": {
@@ -155,17 +113,6 @@
                     "$ref": "#/definitions/shared.Money"
                 },
                 "sku": {
-                    "type": "string"
-                }
-            }
-        },
-        "order.RejectOrderPaymentCommand": {
-            "type": "object",
-            "properties": {
-                "orderNumber": {
-                    "type": "string"
-                },
-                "rejectReason": {
                     "type": "string"
                 }
             }
