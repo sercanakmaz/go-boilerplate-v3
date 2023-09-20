@@ -54,7 +54,7 @@ func (self *EventContext) AddRaised(event IBaseEvent) {
 
 func (self *EventContext) AddDispatched(event IBaseEvent) {
 	self.mu.Lock()
-	self.dispatchedEvents = append(self.raisedEvents, event)
+	self.dispatchedEvents = append(self.dispatchedEvents, event)
 	self.mu.Unlock()
 }
 

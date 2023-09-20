@@ -2,9 +2,10 @@ package ddd
 
 import (
 	"context"
+	"github.com/sercanakmaz/go-boilerplate-v3/pkg/rabbitmqv1"
 )
 
-func HandleUseCase[H IBaseUseCaseHandler[U, R], U IBaseUseCase, R any](ctx context.Context, handler H, useCase U, result *UseCaseResult[R]) error {
+func HandleUseCase[H IBaseUseCaseHandler[U, R], U IBaseUseCase, R any](ctx context.Context, messageBus *rabbitmqv1.Client, handler H, useCase U, result *UseCaseResult[R]) error {
 	var (
 		handleErr     error
 		middlewareErr error
@@ -20,10 +21,13 @@ func HandleUseCase[H IBaseUseCaseHandler[U, R], U IBaseUseCase, R any](ctx conte
 	}
 
 	handleErr, innerResult = handler.Handle(ctx, useCase)
-	*result = *innerResult
+
+	if innerResult != nil {
+		*result = *innerResult
+	}
 
 	// TODO: Sercan'a sor! error alsak bile dispatch edecek miyiz?
-	if handleErr != nil {
+	if handleErr == nil {
 		dispatcher := GetEventDispatcher(ctx)
 
 		if dispatcher != nil {
@@ -35,7 +39,8 @@ func HandleUseCase[H IBaseUseCaseHandler[U, R], U IBaseUseCase, R any](ctx conte
 					break
 				}
 				if dispatcherErr = dispatcher.Dispatch(ctx, raisedEvent); dispatcherErr != nil {
-					return dispatcherErr
+					handleErr = dispatcherErr
+					break
 				}
 				eventContext.AddDispatched(raisedEvent)
 			}
@@ -48,5 +53,24 @@ func HandleUseCase[H IBaseUseCaseHandler[U, R], U IBaseUseCase, R any](ctx conte
 		}
 	}
 
-	return handleErr
+	if handleErr != nil {
+		return handleErr
+	}
+
+	// TODO: Rabbitmq event publisher yazılıp, içerisine taşınacak
+
+	eventContext := GetEventContext(ctx)
+
+	for true {
+		dispatchedEvent := eventContext.TakeDispatched()
+		if dispatchedEvent == nil {
+			break
+		}
+
+		if handleErr = messageBus.Publish(ctx, "*", dispatchedEvent); handleErr != nil {
+			return handleErr
+		}
+	}
+
+	return nil
 }

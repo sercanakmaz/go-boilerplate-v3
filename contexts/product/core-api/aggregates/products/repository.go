@@ -3,6 +3,7 @@ package products
 import (
 	"context"
 	"github.com/sercanakmaz/go-boilerplate-v3/pkg/ddd"
+	ourMongo "github.com/sercanakmaz/go-boilerplate-v3/pkg/mongo"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -28,19 +29,25 @@ func NewProductRepository(db *mongo.Database) IProductRepository {
 }
 
 func (repository productRepository) FindOneById(ctx context.Context, id primitive.ObjectID) (*Product, error) {
+	sessionContext := ourMongo.GetSessionContext(ctx)
+
 	var product *Product
-	err := repository.db.Collection(_collectionName).FindOne(ctx, bson.M{"_id": id}).Decode(&product)
+	err := repository.db.Collection(_collectionName).FindOne(sessionContext, bson.M{"_id": id}).Decode(&product)
 	return product, err
 }
 
 func (repository productRepository) FindOneBySku(ctx context.Context, sku string) (*Product, error) {
+	sessionContext := ourMongo.GetSessionContext(ctx)
+
 	var product *Product
-	err := repository.db.Collection(_collectionName).FindOne(ctx, bson.M{"Sku": sku}).Decode(&product)
+	err := repository.db.Collection(_collectionName).FindOne(sessionContext, bson.M{"Sku": sku}).Decode(&product)
 	return product, err
 }
 
 func (repository productRepository) Add(ctx context.Context, product *Product) error {
-	_, err := repository.db.Collection(_collectionName).InsertOne(ctx, &product, options.InsertOne())
+	sessionContext := ourMongo.GetSessionContext(ctx)
+
+	_, err := repository.db.Collection(_collectionName).InsertOne(sessionContext, &product, options.InsertOne())
 
 	ddd.DispatchDomainEvents(ctx, product)
 
@@ -48,7 +55,9 @@ func (repository productRepository) Add(ctx context.Context, product *Product) e
 }
 
 func (repository productRepository) Update(ctx context.Context, product *Product) error {
-	_, err := repository.db.Collection(_collectionName).ReplaceOne(ctx, bson.M{"_id": product.Id}, &product)
+	sessionContext := ourMongo.GetSessionContext(ctx)
+
+	_, err := repository.db.Collection(_collectionName).ReplaceOne(sessionContext, bson.M{"_id": product.Id}, &product)
 
 	return err
 }

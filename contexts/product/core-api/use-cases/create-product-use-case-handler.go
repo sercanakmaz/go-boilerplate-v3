@@ -17,15 +17,19 @@ type CreateProductUseCaseHandler struct {
 }
 
 func NewCreateProductUseCaseHandler(client *mongo.Client, productService products.IProductService) *CreateProductUseCaseHandler {
-	var handler = &CreateProductUseCaseHandler{
+	handler := &CreateProductUseCaseHandler{
 		client:         client,
 		productService: productService,
 	}
 
-	handler.middlewares = append(handler.middlewares, ourMongo.NewTransactionMiddleware[*productModels.CreateProductCommand, *productModels.CreateProductResponse](client))
-	handler.middlewares = append(handler.middlewares, ddd.NewEventHandlerDispatcherMiddleware[*productModels.CreateProductCommand, *productModels.CreateProductResponse](infra.NewEventHandlerDispatcher()))
+	handler.SetMiddlewares()
 
 	return handler
+}
+
+func (self *CreateProductUseCaseHandler) SetMiddlewares() {
+	self.middlewares = append(self.middlewares, ourMongo.NewTransactionMiddleware[*productModels.CreateProductCommand, *productModels.CreateProductResponse](self.client))
+	self.middlewares = append(self.middlewares, ddd.NewEventHandlerDispatcherMiddleware[*productModels.CreateProductCommand, *productModels.CreateProductResponse](infra.NewEventHandlerDispatcher()))
 }
 
 func (self *CreateProductUseCaseHandler) GetMiddlewares() []ddd.IBaseUseCaseMiddleware[*productModels.CreateProductCommand, *productModels.CreateProductResponse] {

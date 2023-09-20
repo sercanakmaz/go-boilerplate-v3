@@ -3,7 +3,7 @@
     "Port": 8000
   },
   "Mongo": {
-    "MongoDb": "mongodb://root:example@127.0.0.1:27017",
+    "MongoDb": "mongodb://mongo0:30000,mongo1:30001,mongo2:30002/?replicaSet=rs0",
     "Database": "ddd-example"
   },
   "RabbitMQ": {

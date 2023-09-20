@@ -16,6 +16,10 @@ type Created struct {
 	ddd.IBaseEvent
 }
 
+func (s *Created) EventName() string {
+	return "Product:Created"
+}
+
 func (s *Created) ExchangeName() string {
-	return "Products:Created"
+	return "HG.Integration.Product:Created"
 }
