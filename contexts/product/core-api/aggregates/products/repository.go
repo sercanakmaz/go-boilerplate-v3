@@ -42,6 +42,8 @@ func (repository productRepository) FindOneBySku(ctx context.Context, sku string
 func (repository productRepository) Add(ctx context.Context, product *Product) error {
 	_, err := repository.db.Collection(_collectionName).InsertOne(ctx, &product, options.InsertOne())
 
+	ddd.DispatchDomainEvents(ctx, product)
+
 	return err
 }
 
