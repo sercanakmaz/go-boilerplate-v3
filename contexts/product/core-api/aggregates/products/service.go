@@ -22,6 +22,9 @@ func NewProductService(repository IProductRepository) IProductService {
 func (service productService) AddNew(ctx context.Context, sku string, name string, initialStock int, price shared.Money, categoryID int) (*Product, error) {
 	var product = NewProduct(sku, name, initialStock, price, categoryID)
 
+	product.calculateFinalPrice()
+	product.brandCross()
+
 	var err = service.Repository.Add(ctx, product)
 
 	return product, err

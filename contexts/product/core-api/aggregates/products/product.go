@@ -64,4 +64,6 @@ func (u *Product) calculateFinalPrice() {
 	}
 }
 
-// TODO: Mapping
+func (u *Product) brandCross() {
+	// Crossing stuff
+}

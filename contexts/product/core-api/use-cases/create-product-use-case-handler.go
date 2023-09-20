@@ -49,5 +49,5 @@ func (self *CreateProductUseCaseHandler) Handle(ctx context.Context, command *pr
 		return err, nil
 	}
 
-	return nil, ddd.NewUseCaseResultWithContent[*productModels.CreateProductResponse](productModels.NewCreateProductResponse(product))
+	return nil, ddd.NewUseCaseResultWithContent[*productModels.CreateProductResponse](product.ConvertCreateProductResponse())
 }
