@@ -2,6 +2,7 @@ package infra
 
 import (
 	"context"
+	"fmt"
 	"github.com/sercanakmaz/go-boilerplate-v3/pkg/ddd"
 )
 
@@ -15,7 +16,7 @@ func NewEventHandlerDispatcher() ddd.IEventDispatcher {
 func (s *EventHandlerDispatcher) Dispatch(ctx context.Context, event ddd.IBaseEvent) error {
 	switch event.ExchangeName() {
 	case "Product:Created":
-		// Senkron
+		fmt.Println("here")
 		return nil
 	}
 	return nil

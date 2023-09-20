@@ -39,7 +39,6 @@ func (self *CreateProductUseCaseHandler) Handle(ctx context.Context, command *pr
 		product *products.Product
 	)
 
-	// TODO: Sercan'a sor! Command geçince circular dependency hatası alınıyor. Tek tek parametre geçmek mantıklı değil. Product
 	if product, err = self.productService.AddNew(ctx,
 		command.Sku,
 		command.Name,

@@ -15,7 +15,7 @@ import (
 )
 
 func NewProductController(e *echo.Echo, client *mongo.Client, productService products.IProductService, httpErrorHandler middlewares.HttpErrorHandler) {
-	v1 := e.Group("/v1/products/")
+	v1 := e.Group("/v1/products")
 
 	CreateProduct(v1, client, productService)
 
