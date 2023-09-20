@@ -63,3 +63,5 @@ func (u *Product) calculateFinalPrice() {
 		CurrencyCode: u.Price.CurrencyCode,
 	}
 }
+
+// TODO: Mapping

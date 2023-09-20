@@ -15,10 +15,8 @@ func NewEventHandlerDispatcher() ddd.IEventDispatcher {
 func (s *EventHandlerDispatcher) Dispatch(ctx context.Context, event ddd.IBaseEvent) error {
 	switch event.ExchangeName() {
 	case "Product:Created":
-		// TODO: Sercan'a sor -> Rabbit'e pushla ?
+		// Senkron
 		return nil
 	}
-
-	// TODO: Add Outbox Pattern
 	return nil
 }

@@ -32,7 +32,7 @@ func NewProductController(e *echo.Echo, client *mongo.Client, productService pro
 // @Failure 500 {string} string
 // @Router /v1/products/ [post]
 func CreateProduct(group *echo.Group, client *mongo.Client, productService products.IProductService) {
-	group.POST("", func(ctx echo.Context) error {
+	group.POST("", func(eCtx echo.Context) error {
 
 		var (
 			command *productModels.CreateProductCommand
@@ -41,16 +41,23 @@ func CreateProduct(group *echo.Group, client *mongo.Client, productService produ
 			err     error
 		)
 
-		if err = ctx.Bind(&command); err != nil {
+		if err = eCtx.Bind(&command); err != nil {
 			panic(fmt.Errorf("%v %w", "CreateProductCommand", ourhttp.ErrCommandBindFailed))
 		}
 
 		var handler = use_cases.NewCreateProductUseCaseHandler(client, productService)
 
-		if err = ddd.HandleUseCase(ctx.Request().Context(), handler, command, result); err != nil {
+		ctx := eCtx.Request().Context()
+
+		if err = ddd.HandleUseCase(ctx, handler, command, result); err != nil {
 			panic(fmt.Errorf("%v %w", "CreateProductCommand", ourhttp.ErrUseCaseHandleFailed))
 		}
 
-		return ctx.JSON(http.StatusCreated, product)
+		eventContext := ddd.GetEventContext(ctx)
+		_ = eventContext.TakeDispatched()
+
+		// TODO: Publish events to rabbit
+
+		return eCtx.JSON(http.StatusCreated, product)
 	})
 }
