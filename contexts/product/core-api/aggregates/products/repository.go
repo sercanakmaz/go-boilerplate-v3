@@ -23,8 +23,8 @@ type productRepository struct {
 	eventDispatcher ddd.IEventDispatcher
 }
 
-func newProductRepository(db *mongo.Database, eventDispatcher ddd.IEventDispatcher) IProductRepository {
-	return &productRepository{db: db, eventDispatcher: eventDispatcher}
+func NewProductRepository(db *mongo.Database) IProductRepository {
+	return &productRepository{db: db}
 }
 
 func (repository productRepository) FindOneById(ctx context.Context, id primitive.ObjectID) (*Product, error) {

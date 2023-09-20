@@ -11,6 +11,7 @@ import (
 	"github.com/sercanakmaz/go-boilerplate-v3/pkg/config"
 	"github.com/sercanakmaz/go-boilerplate-v3/pkg/log"
 	"github.com/sercanakmaz/go-boilerplate-v3/pkg/middlewares"
+	"github.com/sercanakmaz/go-boilerplate-v3/pkg/mongo"
 	"github.com/spf13/cobra"
 	"net/http"
 )
@@ -43,13 +44,16 @@ func Init(cmd *cobra.Command, args []string) error {
 	}))
 	e.GET("/swagger/*", middlewares.WrapHandler)
 
-	var productService = products.NewProductServiceResolve(cfg.RabbitMQ, cfg.Mongo)
+	var mongoDb, mongoClient = mongo.NewMongoDb(cfg.Mongo)
+
+	var productRepository = products.NewProductRepository(mongoDb)
+	var productService = products.NewProductService(productRepository)
 
 	//e.Use(middleware.BasicAuth(func(username string, password string, ctx echo.Context) (bool, error) {
 	//	return userService.AuthUser(context.Background(), username, password)
 	//}))
 
-	controllers_v1.NewProductController(e, productService, httpErrorHandler)
+	controllers_v1.NewProductController(e, mongoClient, productService, httpErrorHandler)
 
 	return e.Start(fmt.Sprintf(":%v", cfg.Host.Port))
 }

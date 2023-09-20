@@ -39,8 +39,13 @@ func (self *CreateProductUseCaseHandler) Handle(ctx context.Context, command *pr
 		product *products.Product
 	)
 
-	// TODO: Sercan'a sor! Command mı dto mu?
-	if product, err = self.productService.AddNew(ctx, command); err != nil {
+	// TODO: Sercan'a sor! Command geçince circular dependency hatası alınıyor. Tek tek parametre geçmek mantıklı değil.
+	if product, err = self.productService.AddNew(ctx,
+		command.Sku,
+		command.Name,
+		command.InitialStock,
+		command.Price,
+		command.CategoryID); err != nil {
 		return err, nil
 	}
 

@@ -37,7 +37,7 @@ func CreateProduct(group *echo.Group, client *mongo.Client, productService produ
 		var (
 			command *productModels.CreateProductCommand
 			product *products.Product
-			result  = new(ddd.UseCaseResult[string])
+			result  = new(ddd.UseCaseResult[*productModels.CreateProductResponse])
 			err     error
 		)
 
