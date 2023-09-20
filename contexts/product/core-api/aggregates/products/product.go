@@ -63,21 +63,3 @@ func (u *Product) calculateFinalPrice() {
 		CurrencyCode: u.Price.CurrencyCode,
 	}
 }
-
-func (u *Product) IncreaseStock(amount int) {
-	u.Stock += amount
-
-	u.RaiseEvent(&products.StockIncreased{
-		Id:    u.Id.Hex(),
-		Stock: u.Stock,
-	})
-}
-
-func (u *Product) DecreaseStock(amount int) {
-	u.Stock -= amount
-
-	u.RaiseEvent(&products.StockDecreased{
-		Id:    u.Id.Hex(),
-		Stock: u.Stock,
-	})
-}
