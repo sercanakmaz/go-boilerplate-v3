@@ -47,7 +47,7 @@ func CreateProduct(group *echo.Group, client *mongo.Client, productService produ
 
 		var handler = use_cases.NewCreateProductUseCaseHandler(client, productService)
 
-		ctx := eCtx.Request().Context()
+		ctx := ddd.NewEventContext(eCtx.Request().Context())
 
 		if err = ddd.HandleUseCase(ctx, handler, command, result); err != nil {
 			panic(fmt.Errorf("%v %w", "CreateProductCommand", ourhttp.ErrUseCaseHandleFailed))

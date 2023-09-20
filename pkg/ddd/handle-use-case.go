@@ -13,8 +13,6 @@ func HandleUseCase[H IBaseUseCaseHandler[U, R], U IBaseUseCase, R any](ctx conte
 		innerResult   *UseCaseResult[R]
 	)
 
-	ctx = NewEventContext(ctx)
-
 	for _, middleWare := range middleWares {
 		if middlewareErr, ctx, useCase = middleWare.Before(ctx, useCase); middlewareErr != nil {
 			return middlewareErr
@@ -22,23 +20,25 @@ func HandleUseCase[H IBaseUseCaseHandler[U, R], U IBaseUseCase, R any](ctx conte
 	}
 
 	handleErr, innerResult = handler.Handle(ctx, useCase)
-
 	*result = *innerResult
 
-	dispatcher := GetEventDispatcher(ctx)
+	// TODO: Sercan'a sor! error alsak bile dispatch edecek miyiz?
+	if handleErr != nil {
+		dispatcher := GetEventDispatcher(ctx)
 
-	if dispatcher != nil {
-		eventContext := GetEventContext(ctx)
+		if dispatcher != nil {
+			eventContext := GetEventContext(ctx)
 
-		for true {
-			raisedEvent := eventContext.TakeRaised()
-			if raisedEvent == nil {
-				break
+			for true {
+				raisedEvent := eventContext.TakeRaised()
+				if raisedEvent == nil {
+					break
+				}
+				if dispatcherErr = dispatcher.Dispatch(ctx, raisedEvent); dispatcherErr != nil {
+					return dispatcherErr
+				}
+				eventContext.AddDispatched(raisedEvent)
 			}
-			if dispatcherErr = dispatcher.Dispatch(ctx, raisedEvent); dispatcherErr != nil {
-				return dispatcherErr
-			}
-			eventContext.AddDispatched(raisedEvent)
 		}
 	}
 

@@ -43,8 +43,15 @@ func (s *TransactionMiddleware[T, R]) Before(ctx context.Context, useCase T) (er
 }
 
 func (s *TransactionMiddleware[T, R]) After(ctx context.Context, useCase T, err error, result *ddd.UseCaseResult[R]) (error, context.Context, T, *ddd.UseCaseResult[R]) {
-	if err = s.session.CommitTransaction(s.sc); err != nil {
-		return err, ctx, useCase, result
+
+	if err != nil {
+		if err = s.session.AbortTransaction(s.sc); err != nil {
+			return err, ctx, useCase, result
+		}
+	} else {
+		if err = s.session.CommitTransaction(s.sc); err != nil {
+			return err, ctx, useCase, result
+		}
 	}
 
 	s.session.EndSession(ctx)
