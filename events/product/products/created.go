@@ -19,7 +19,3 @@ type Created struct {
 func (s *Created) EventName() string {
 	return "Product:Created"
 }
-
-func (s *Created) ExchangeName() string {
-	return "HG.Integration.Product:Created"
-}

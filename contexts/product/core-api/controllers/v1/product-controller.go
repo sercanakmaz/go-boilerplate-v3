@@ -54,6 +54,19 @@ func CreateProduct(group *echo.Group, client *mongo.Client, messageBus *rabbitmq
 			panic(fmt.Errorf("%v %w", "CreateProductCommand", ourhttp.ErrUseCaseHandleFailed))
 		}
 
+		// TODO: Rabbitmq event publisher Echo middleware olarak yazılıp, içerisine taşınacak
+
+		eventContext := ddd.GetEventContext(ctx)
+
+		for true {
+			dispatchedEvent := eventContext.TakeDispatched()
+			if dispatchedEvent == nil {
+				break
+			}
+
+			_ = messageBus.Publish(ctx, "*", dispatchedEvent)
+		}
+
 		return eCtx.JSON(http.StatusCreated, product)
 	})
 }

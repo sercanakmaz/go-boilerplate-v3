@@ -403,6 +403,7 @@ func (c *Client) Publish(ctx context.Context, routingKey string, payload interfa
 			}
 		}
 	}
+
 	if publisher == nil {
 		return fmt.Errorf("%v is not declared before ", payload)
 	}

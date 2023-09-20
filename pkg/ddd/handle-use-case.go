@@ -26,7 +26,6 @@ func HandleUseCase[H IBaseUseCaseHandler[U, R], U IBaseUseCase, R any](ctx conte
 		*result = *innerResult
 	}
 
-	// TODO: Sercan'a sor! error alsak bile dispatch edecek miyiz?
 	if handleErr == nil {
 		dispatcher := GetEventDispatcher(ctx)
 
@@ -53,24 +52,5 @@ func HandleUseCase[H IBaseUseCaseHandler[U, R], U IBaseUseCase, R any](ctx conte
 		}
 	}
 
-	if handleErr != nil {
-		return handleErr
-	}
-
-	// TODO: Rabbitmq event publisher yazılıp, içerisine taşınacak
-
-	eventContext := GetEventContext(ctx)
-
-	for true {
-		dispatchedEvent := eventContext.TakeDispatched()
-		if dispatchedEvent == nil {
-			break
-		}
-
-		if handleErr = messageBus.Publish(ctx, "*", dispatchedEvent); handleErr != nil {
-			return handleErr
-		}
-	}
-
-	return nil
+	return handleErr
 }

@@ -15,5 +15,5 @@ func NewRabbitMQEventDispatcher(rbt *rmqc.RabbitMQ) ddd.IEventDispatcher {
 }
 
 func (dispatcher RabbitMQEventDispatcher) Dispatch(ctx context.Context, event ddd.IBaseEvent) error {
-	return dispatcher.rbt.Publish(event.ExchangeName(), "", event)
+	return dispatcher.rbt.Publish(event.EventName(), "", event)
 }

@@ -48,19 +48,21 @@ func DispatchDomainEvents(ctx context.Context, order IAggregateRoot) {
 
 func (self *EventContext) AddRaised(event IBaseEvent) {
 	self.mu.Lock()
+	defer self.mu.Unlock()
 	self.raisedEvents = append(self.raisedEvents, event)
-	self.mu.Unlock()
 }
 
 func (self *EventContext) AddDispatched(event IBaseEvent) {
 	self.mu.Lock()
+	defer self.mu.Unlock()
 	self.dispatchedEvents = append(self.dispatchedEvents, event)
-	self.mu.Unlock()
 }
 
 func (self *EventContext) TakeRaised() IBaseEvent {
 
 	self.mu.Lock()
+
+	defer self.mu.Unlock()
 
 	if len(self.raisedEvents) == 0 {
 		return nil
@@ -70,14 +72,14 @@ func (self *EventContext) TakeRaised() IBaseEvent {
 
 	self.raisedEvents = self.raisedEvents[1:]
 
-	self.mu.Unlock()
-
 	return result
 }
 
 func (self *EventContext) TakeDispatched() IBaseEvent {
 
 	self.mu.Lock()
+
+	defer self.mu.Unlock()
 
 	if len(self.dispatchedEvents) == 0 {
 		return nil
@@ -86,8 +88,6 @@ func (self *EventContext) TakeDispatched() IBaseEvent {
 	result := self.dispatchedEvents[0]
 
 	self.dispatchedEvents = self.dispatchedEvents[1:]
-
-	self.mu.Unlock()
 
 	return result
 }

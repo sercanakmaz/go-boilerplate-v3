@@ -16,7 +16,7 @@ func NewEventHandlerDispatcher() ddd.IEventDispatcher {
 func (s *EventHandlerDispatcher) Dispatch(ctx context.Context, event ddd.IBaseEvent) error {
 	switch event.EventName() {
 	case "Product:Created":
-		fmt.Println("here")
+		fmt.Println("Sync event dispatcher!")
 		return nil
 	}
 	return nil
