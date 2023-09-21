@@ -9,16 +9,15 @@ import (
 	"github.com/sercanakmaz/go-boilerplate-v3/pkg/ddd"
 	ourhttp "github.com/sercanakmaz/go-boilerplate-v3/pkg/http"
 	"github.com/sercanakmaz/go-boilerplate-v3/pkg/middlewares"
-	"github.com/sercanakmaz/go-boilerplate-v3/pkg/rabbitmqv1"
 	string_helper "github.com/sercanakmaz/go-boilerplate-v3/pkg/string-helper"
 	"go.mongodb.org/mongo-driver/mongo"
 	"net/http"
 )
 
-func NewProductController(e *echo.Echo, client *mongo.Client, messageBus *rabbitmqv1.Client, productService products.IProductService, httpErrorHandler middlewares.HttpErrorHandler) {
+func NewProductController(e *echo.Echo, client *mongo.Client, rabbitMQPublisher ddd.IEventPublisher, productService products.IProductService, httpErrorHandler middlewares.HttpErrorHandler) {
 	v1 := e.Group("/v1/products")
 
-	CreateProduct(v1, client, messageBus, productService)
+	CreateProduct(v1, client, rabbitMQPublisher, productService)
 
 	httpErrorHandler.Add(string_helper.ErrIsNullOrEmpty, http.StatusBadRequest)
 	httpErrorHandler.Add(ourhttp.ErrCommandBindFailed, http.StatusBadRequest)
@@ -32,7 +31,7 @@ func NewProductController(e *echo.Echo, client *mongo.Client, messageBus *rabbit
 // @Failure 400 {string} string
 // @Failure 500 {string} string
 // @Router /v1/products/ [post]
-func CreateProduct(group *echo.Group, client *mongo.Client, messageBus *rabbitmqv1.Client, productService products.IProductService) {
+func CreateProduct(group *echo.Group, client *mongo.Client, rabbitMQPublisher ddd.IEventPublisher, productService products.IProductService) {
 	group.POST("", func(eCtx echo.Context) error {
 
 		var (
@@ -50,21 +49,12 @@ func CreateProduct(group *echo.Group, client *mongo.Client, messageBus *rabbitmq
 
 		ctx := ddd.NewEventContext(eCtx.Request().Context())
 
-		if err = ddd.HandleUseCase(ctx, messageBus, handler, command, result); err != nil {
+		if err = ddd.HandleUseCase(ctx, handler, command, result); err != nil {
 			panic(fmt.Errorf("%v %w", "CreateProductCommand", ourhttp.ErrUseCaseHandleFailed))
 		}
 
-		// TODO: Rabbitmq event publisher Echo middleware olarak yazılıp, içerisine taşınacak
-
-		eventContext := ddd.GetEventContext(ctx)
-
-		for true {
-			dispatchedEvent := eventContext.TakeDispatched()
-			if dispatchedEvent == nil {
-				break
-			}
-
-			_ = messageBus.Publish(ctx, "*", dispatchedEvent)
+		if err = rabbitMQPublisher.Publish(ctx); err != nil {
+			panic(fmt.Errorf("%v %w", "CreateProductCommand", ourhttp.ErrRabbitMQPublishFailed))
 		}
 
 		return eCtx.JSON(http.StatusCreated, product)

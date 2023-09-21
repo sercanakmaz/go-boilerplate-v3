@@ -9,6 +9,7 @@ import (
 	"github.com/sercanakmaz/go-boilerplate-v3/contexts/product/core-api/aggregates/products"
 	controllers_v1 "github.com/sercanakmaz/go-boilerplate-v3/contexts/product/core-api/controllers/v1"
 	"github.com/sercanakmaz/go-boilerplate-v3/contexts/product/core-api/docs"
+	"github.com/sercanakmaz/go-boilerplate-v3/contexts/product/core-api/infra"
 	product_events "github.com/sercanakmaz/go-boilerplate-v3/events/product/products"
 	"github.com/sercanakmaz/go-boilerplate-v3/pkg/config"
 	"github.com/sercanakmaz/go-boilerplate-v3/pkg/log"
@@ -60,6 +61,8 @@ func Init(cmd *cobra.Command, args []string) error {
 
 	messageBus.AddPublisher(ctx, "HG.Integration.Product:Created", rabbitmqv1.Topic, product_events.Created{})
 
+	rabbitMQPublisher := infra.NewRabbitMQEventPublisher(messageBus)
+
 	var mongoDb, mongoClient = mongo.NewMongoDb(cfg.Mongo)
 
 	var productRepository = products.NewProductRepository(mongoDb)
@@ -69,7 +72,7 @@ func Init(cmd *cobra.Command, args []string) error {
 	//	return userService.AuthUser(context.Background(), username, password)
 	//}))
 
-	controllers_v1.NewProductController(e, mongoClient, messageBus, productService, httpErrorHandler)
+	controllers_v1.NewProductController(e, mongoClient, rabbitMQPublisher, productService, httpErrorHandler)
 
 	return e.Start(fmt.Sprintf(":%v", cfg.Host.Port))
 }

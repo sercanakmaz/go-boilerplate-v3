@@ -2,10 +2,9 @@ package ddd
 
 import (
 	"context"
-	"github.com/sercanakmaz/go-boilerplate-v3/pkg/rabbitmqv1"
 )
 
-func HandleUseCase[H IBaseUseCaseHandler[U, R], U IBaseUseCase, R any](ctx context.Context, messageBus *rabbitmqv1.Client, handler H, useCase U, result *UseCaseResult[R]) error {
+func HandleUseCase[H IBaseUseCaseHandler[U, R], U IBaseUseCase, R any](ctx context.Context, handler H, useCase U, result *UseCaseResult[R]) error {
 	var (
 		handleErr     error
 		middlewareErr error

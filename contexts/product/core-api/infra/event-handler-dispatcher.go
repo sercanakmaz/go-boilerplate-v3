@@ -13,6 +13,7 @@ func NewEventHandlerDispatcher() ddd.IEventDispatcher {
 	return &EventHandlerDispatcher{}
 }
 
+// TODO: Sercan'a sor.
 func (s *EventHandlerDispatcher) Dispatch(ctx context.Context, event ddd.IBaseEvent) error {
 	switch event.EventName() {
 	case "Product:Created":
