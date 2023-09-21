@@ -29,7 +29,7 @@ func NewCreateProductUseCaseHandler(client *mongo.Client, productService product
 
 func (self *CreateProductUseCaseHandler) SetMiddlewares() {
 	self.middlewares = append(self.middlewares, ourMongo.NewTransactionMiddleware[*productModels.CreateProductCommand, *productModels.CreateProductResponse](self.client))
-	self.middlewares = append(self.middlewares, ddd.NewEventHandlerDispatcherMiddleware[*productModels.CreateProductCommand, *productModels.CreateProductResponse](infra.NewEventHandlerDispatcher()))
+	self.middlewares = append(self.middlewares, ddd.NewEventHandlerDispatcherMiddleware[*productModels.CreateProductCommand, *productModels.CreateProductResponse](infra.NewEventDispatcher()))
 }
 
 func (self *CreateProductUseCaseHandler) GetMiddlewares() []ddd.IBaseUseCaseMiddleware[*productModels.CreateProductCommand, *productModels.CreateProductResponse] {

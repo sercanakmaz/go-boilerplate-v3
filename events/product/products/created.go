@@ -10,6 +10,7 @@ type Created struct {
 	Sku        string       `json:"sku"`
 	Name       string       `json:"name"`
 	Stock      int          `json:"stock"`
+	CompanyId  int          `json:"company_id"`
 	Price      shared.Money `json:"price"`
 	FinalPrice shared.Money `json:"finalPrice"`
 	CategoryId int          `json:"categoryId"`

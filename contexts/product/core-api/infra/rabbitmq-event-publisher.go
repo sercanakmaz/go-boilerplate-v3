@@ -2,6 +2,7 @@ package infra
 
 import (
 	"context"
+	"github.com/sercanakmaz/go-boilerplate-v3/events/product/products"
 	"github.com/sercanakmaz/go-boilerplate-v3/pkg/ddd"
 	"github.com/sercanakmaz/go-boilerplate-v3/pkg/rabbitmqv1"
 )
@@ -23,8 +24,12 @@ func (p *RabbitMQEventPublisher) Publish(ctx context.Context) error {
 			break
 		}
 
-		if err := p.MessageBus.Publish(ctx, "*", dispatchedEvent); err != nil {
-			return err
+		// TODO: Burayı araştır. Workaround...
+		if dispatchedEvent.EventName() == "Product:Created" {
+			castedEvent := dispatchedEvent.(*products.Created)
+			if err := p.MessageBus.Publish(ctx, "*", *castedEvent); err != nil {
+				return err
+			}
 		}
 	}
 
