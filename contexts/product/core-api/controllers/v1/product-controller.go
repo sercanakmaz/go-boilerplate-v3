@@ -53,6 +53,7 @@ func CreateProduct(group *echo.Group, client *mongo.Client, rabbitMQPublisher dd
 			panic(fmt.Errorf("%v %w", "CreateProductCommand", ourhttp.ErrUseCaseHandleFailed))
 		}
 
+		// TODO: convert to echo middleware
 		if err = rabbitMQPublisher.Publish(ctx); err != nil {
 			panic(fmt.Errorf("%v %w", "CreateProductCommand", ourhttp.ErrRabbitMQPublishFailed))
 		}

@@ -24,22 +24,16 @@ func NewMarketplaceProductConsumer(messageBus *rabbitmqv1.Client, log logger.Log
 }
 
 func (c *MarketplaceProductConsumer) Construct() {
-	c.MessageBus.AddConsumer("HG.Marketplace.Product.Create.Publish").
-		SubscriberExchange("*", rabbitmqv1.Topic, "HG.Integration.Product:Created").
-		HandleConsumer(c.marketplaceProductCreatePublisher())
-
-	// Farklı consumer olabilir.
-
 	c.MessageBus.AddConsumer("HG.Marketplace.Product.Create.Foleja").
-		SubscriberExchange("*", rabbitmqv1.Topic, "HG.Integration.MarketplaceProduct:Create").
+		SubscriberExchange("*", rabbitmqv1.Topic, "HG.Integration.Product:Created").
 		HandleConsumer(c.createMarketplaceProductForFoleja())
 
 	c.MessageBus.AddConsumer("HG.Marketplace.Product.Create.Hepsiglobal").
-		SubscriberExchange("*", rabbitmqv1.Topic, "HG.Integration.MarketplaceProduct:Create").
+		SubscriberExchange("*", rabbitmqv1.Topic, "HG.Integration.Product:Created").
 		HandleConsumer(c.createMarketplaceProductForHepsiglobal())
 }
 
-func (c *MarketplaceProductConsumer) marketplaceProductCreatePublisher() func(message rabbitmqv1.Message) error {
+func (c *MarketplaceProductConsumer) createMarketplaceProductForFoleja() func(message rabbitmqv1.Message) error {
 	return func(message rabbitmqv1.Message) error {
 		var eventMessage products.Created
 
@@ -47,40 +41,9 @@ func (c *MarketplaceProductConsumer) marketplaceProductCreatePublisher() func(me
 			return err
 		}
 
-		ctx := c.Logger.WithCorrelationId(context.Background(), uuid.NewV4().String())
-
-		c.Logger.Info(ctx, "consumer start")
-
 		// Company'nin aktif olduğu marketplaceleri çektik.
 
-		marketplaces := []string{"Foleja", "Hepsiglobal"}
-
-		for key, _ := range marketplaces {
-			if err := c.MessageBus.Publish(ctx, "*", marketplace_products.Create{
-				Sku:           eventMessage.Sku,
-				CompanyId:     eventMessage.CompanyId,
-				MarketplaceId: key,
-			}); err != nil {
-				return err
-			}
-		}
-
-		return nil
-	}
-}
-
-func (c *MarketplaceProductConsumer) createMarketplaceProductForFoleja() func(message rabbitmqv1.Message) error {
-	return func(message rabbitmqv1.Message) error {
-		var eventMessage marketplace_products.Create
-
-		if err := json.Unmarshal(message.Payload, &eventMessage); err != nil {
-			return err
-		}
-
-		// Foleja için gelen bir event değilse ignore et.
-		if eventMessage.MarketplaceId != 0 {
-			return nil
-		}
+		// MP'ler içinde Foleja yoksa eventi ignore et.
 
 		ctx := c.Logger.WithCorrelationId(context.Background(), uuid.NewV4().String())
 
@@ -101,11 +64,9 @@ func (c *MarketplaceProductConsumer) createMarketplaceProductForHepsiglobal() fu
 		if err := json.Unmarshal(message.Payload, &eventMessage); err != nil {
 			return err
 		}
+		// Company'nin aktif olduğu marketplaceleri çektik.
 
-		// Hepsiglobal için gelen bir event değilse ignore et.
-		if eventMessage.MarketplaceId != 1 {
-			return nil
-		}
+		// MP'ler içinde HG yoksa eventi ignore et.
 
 		ctx := c.Logger.WithCorrelationId(context.Background(), uuid.NewV4().String())
 

@@ -24,7 +24,7 @@ func (p *RabbitMQEventPublisher) Publish(ctx context.Context) error {
 			break
 		}
 
-		// TODO: Burayı araştır. Workaround...
+		// TODO: gerek kalmadı, kaldırılabilir burası
 		if dispatchedEvent.EventName() == "Product:Created" {
 			castedEvent := dispatchedEvent.(*products.Created)
 			if err := p.MessageBus.Publish(ctx, "*", *castedEvent); err != nil {
