@@ -398,7 +398,7 @@ func (c *Client) Publish(ctx context.Context, routingKey string, payload interfa
 		var tempPublisher = item
 
 		for _, payloadType := range item.payloadTypes {
-			if payloadType == reflect.TypeOf(payload) {
+			if payloadType == reflect.TypeOf(payload) || payloadType == reflect.TypeOf(payload).Elem() {
 				publisher = &tempPublisher
 			}
 		}
