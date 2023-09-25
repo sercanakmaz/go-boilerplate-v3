@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	uuid "github.com/satori/go.uuid"
-	marketplace_products "github.com/sercanakmaz/go-boilerplate-v3/events/product/marketplace-products"
 	"github.com/sercanakmaz/go-boilerplate-v3/events/product/products"
 	logger "github.com/sercanakmaz/go-boilerplate-v3/pkg/log"
 	"github.com/sercanakmaz/go-boilerplate-v3/pkg/rabbitmqv1"
@@ -59,7 +58,7 @@ func (c *MarketplaceProductConsumer) createMarketplaceProductForFoleja() func(me
 
 func (c *MarketplaceProductConsumer) createMarketplaceProductForHepsiglobal() func(message rabbitmqv1.Message) error {
 	return func(message rabbitmqv1.Message) error {
-		var eventMessage marketplace_products.Create
+		var eventMessage products.Created
 
 		if err := json.Unmarshal(message.Payload, &eventMessage); err != nil {
 			return err

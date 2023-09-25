@@ -11,15 +11,17 @@ import (
 )
 
 type CreateProductUseCaseHandler struct {
-	client         *mongo.Client
-	productService products.IProductService
-	middlewares    []ddd.IBaseUseCaseMiddleware[*productModels.CreateProductCommand, *productModels.CreateProductResponse]
+	client            *mongo.Client
+	productService    products.IProductService
+	rabbitMQPublisher ddd.IEventPublisher
+	middlewares       []ddd.IBaseUseCaseMiddleware[*productModels.CreateProductCommand, *productModels.CreateProductResponse]
 }
 
-func NewCreateProductUseCaseHandler(client *mongo.Client, productService products.IProductService) *CreateProductUseCaseHandler {
+func NewCreateProductUseCaseHandler(client *mongo.Client, productService products.IProductService, rabbitMQPublisher ddd.IEventPublisher) *CreateProductUseCaseHandler {
 	handler := &CreateProductUseCaseHandler{
-		client:         client,
-		productService: productService,
+		client:            client,
+		productService:    productService,
+		rabbitMQPublisher: rabbitMQPublisher,
 	}
 
 	handler.SetMiddlewares()
@@ -30,6 +32,7 @@ func NewCreateProductUseCaseHandler(client *mongo.Client, productService product
 func (self *CreateProductUseCaseHandler) SetMiddlewares() {
 	self.middlewares = append(self.middlewares, ourMongo.NewTransactionMiddleware[*productModels.CreateProductCommand, *productModels.CreateProductResponse](self.client))
 	self.middlewares = append(self.middlewares, ddd.NewEventHandlerDispatcherMiddleware[*productModels.CreateProductCommand, *productModels.CreateProductResponse](infra.NewEventDispatcher()))
+	self.middlewares = append(self.middlewares, ddd.NewEventPublisherMiddleware[*productModels.CreateProductCommand, *productModels.CreateProductResponse](self.rabbitMQPublisher))
 }
 
 func (self *CreateProductUseCaseHandler) GetMiddlewares() []ddd.IBaseUseCaseMiddleware[*productModels.CreateProductCommand, *productModels.CreateProductResponse] {

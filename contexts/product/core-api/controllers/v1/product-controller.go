@@ -45,17 +45,12 @@ func CreateProduct(group *echo.Group, client *mongo.Client, rabbitMQPublisher dd
 			panic(fmt.Errorf("%v %w", "CreateProductCommand", ourhttp.ErrCommandBindFailed))
 		}
 
-		var handler = use_cases.NewCreateProductUseCaseHandler(client, productService)
+		var handler = use_cases.NewCreateProductUseCaseHandler(client, productService, rabbitMQPublisher)
 
 		ctx := ddd.NewEventContext(eCtx.Request().Context())
 
 		if err = ddd.HandleUseCase(ctx, handler, command, result); err != nil {
 			panic(fmt.Errorf("%v %w", "CreateProductCommand", ourhttp.ErrUseCaseHandleFailed))
-		}
-
-		// TODO: convert to echo middleware
-		if err = rabbitMQPublisher.Publish(ctx); err != nil {
-			panic(fmt.Errorf("%v %w", "CreateProductCommand", ourhttp.ErrRabbitMQPublishFailed))
 		}
 
 		return eCtx.JSON(http.StatusCreated, product)

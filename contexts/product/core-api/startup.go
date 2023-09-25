@@ -35,6 +35,20 @@ func Init(cmd *cobra.Command, args []string) error {
 	}
 
 	var logger = log.NewLogger()
+
+	messageBus := rabbitmqv1.NewRabbitMqClient(
+		[]string{cfg.RabbitMQ.Host},
+		cfg.RabbitMQ.Username,
+		cfg.RabbitMQ.Password,
+		"",
+		logger,
+		rabbitmqv1.RetryCount(0),
+		rabbitmqv1.PrefetchCount(1))
+
+	messageBus.AddPublisher(ctx, "HG.Integration.Product:Created", rabbitmqv1.Topic, product_events.Created{})
+
+	rabbitMQPublisher := infra.NewRabbitMQEventPublisher(messageBus)
+
 	httpErrorHandler := middlewares.NewHttpErrorHandler()
 
 	e := echo.New()
@@ -49,19 +63,6 @@ func Init(cmd *cobra.Command, args []string) error {
 		AllowMethods: []string{http.MethodGet, http.MethodHead, http.MethodPut, http.MethodPatch, http.MethodPost, http.MethodDelete},
 	}))
 	e.GET("/swagger/*", middlewares.WrapHandler)
-
-	messageBus := rabbitmqv1.NewRabbitMqClient(
-		[]string{cfg.RabbitMQ.Host},
-		cfg.RabbitMQ.Username,
-		cfg.RabbitMQ.Password,
-		"",
-		logger,
-		rabbitmqv1.RetryCount(0),
-		rabbitmqv1.PrefetchCount(1))
-
-	messageBus.AddPublisher(ctx, "HG.Integration.Product:Created", rabbitmqv1.Topic, product_events.Created{})
-
-	rabbitMQPublisher := infra.NewRabbitMQEventPublisher(messageBus)
 
 	var mongoDb, mongoClient = mongo.NewMongoDb(cfg.Mongo)
 

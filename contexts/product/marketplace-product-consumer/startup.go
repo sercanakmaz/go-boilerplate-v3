@@ -4,7 +4,6 @@ import (
 	"context"
 	"github.com/sercanakmaz/go-boilerplate-v3/configs"
 	"github.com/sercanakmaz/go-boilerplate-v3/contexts/product/core-api/docs"
-	marketplace_products "github.com/sercanakmaz/go-boilerplate-v3/events/product/marketplace-products"
 	"github.com/sercanakmaz/go-boilerplate-v3/pkg/config"
 	"github.com/sercanakmaz/go-boilerplate-v3/pkg/log"
 	"github.com/sercanakmaz/go-boilerplate-v3/pkg/rabbitmqv1"
@@ -35,8 +34,6 @@ func Init(cmd *cobra.Command, args []string) error {
 		logger,
 		rabbitmqv1.RetryCount(0),
 		rabbitmqv1.PrefetchCount(1))
-
-	messageBus.AddPublisher(ctx, "HG.Integration.MarketplaceProduct:Create", rabbitmqv1.Topic, marketplace_products.Create{})
 
 	consumer := NewMarketplaceProductConsumer(messageBus, logger)
 	consumer.Construct()
