@@ -3,8 +3,6 @@ package marketplace_product_consumer
 import (
 	"context"
 	"encoding/json"
-	"fmt"
-	uuid "github.com/satori/go.uuid"
 	"github.com/sercanakmaz/go-boilerplate-v3/events/product/products"
 	logger "github.com/sercanakmaz/go-boilerplate-v3/pkg/log"
 	"github.com/sercanakmaz/go-boilerplate-v3/pkg/rabbitmqv1"
@@ -36,6 +34,8 @@ func (c *MarketplaceProductConsumer) createMarketplaceProductForFoleja() func(me
 	return func(message rabbitmqv1.Message) error {
 		var eventMessage products.Created
 
+		ctx := c.Logger.WithCorrelationId(context.Background(), message.GetCorrelationId())
+
 		if err := json.Unmarshal(message.Payload, &eventMessage); err != nil {
 			return err
 		}
@@ -44,13 +44,11 @@ func (c *MarketplaceProductConsumer) createMarketplaceProductForFoleja() func(me
 
 		// MP'ler içinde Foleja yoksa eventi ignore et.
 
-		ctx := c.Logger.WithCorrelationId(context.Background(), uuid.NewV4().String())
-
 		c.Logger.Info(ctx, "consumer start")
 
 		// Foleja Logic
 
-		fmt.Println(eventMessage)
+		c.Logger.Info(ctx, "consumer finish")
 
 		return nil
 	}
@@ -60,21 +58,21 @@ func (c *MarketplaceProductConsumer) createMarketplaceProductForHepsiglobal() fu
 	return func(message rabbitmqv1.Message) error {
 		var eventMessage products.Created
 
+		ctx := c.Logger.WithCorrelationId(context.Background(), message.GetCorrelationId())
+
 		if err := json.Unmarshal(message.Payload, &eventMessage); err != nil {
 			return err
 		}
+
 		// Company'nin aktif olduğu marketplaceleri çektik.
 
 		// MP'ler içinde HG yoksa eventi ignore et.
-
-		ctx := c.Logger.WithCorrelationId(context.Background(), uuid.NewV4().String())
 
 		c.Logger.Info(ctx, "consumer start")
 
 		// HG Logic
 
-		fmt.Println(eventMessage)
-
+		c.Logger.Info(ctx, "consumer finish")
 		return nil
 	}
 }

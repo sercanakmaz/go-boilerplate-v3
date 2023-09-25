@@ -88,7 +88,15 @@ func (p *PublisherBuilder) Publish(ctx context.Context, routingKey string, excha
 
 	p.SubscriberExchange()
 
-	if message, err = publishMessage("", payload); err != nil {
+	correlationId := ""
+
+	crId := ctx.Value("correlationId")
+
+	if crId != nil {
+		correlationId = (crId).(string)
+	}
+
+	if message, err = publishMessage(correlationId, payload); err != nil {
 		return err
 	}
 

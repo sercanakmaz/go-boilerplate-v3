@@ -1,6 +1,7 @@
 package rabbitmqv1
 
 import (
+	uuid "github.com/satori/go.uuid"
 	"github.com/streadway/amqp"
 	"time"
 )
@@ -89,4 +90,11 @@ func (c *Consumer) SubscriberExchangeWithArguments(routingKey string, exchangeTy
 		args:         args,
 	})
 	return c
+}
+
+func (m *Message) GetCorrelationId() string {
+	if m.CorrelationId == "" {
+		return uuid.NewV4().String()
+	}
+	return m.CorrelationId
 }

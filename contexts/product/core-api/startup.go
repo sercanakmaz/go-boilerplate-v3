@@ -47,7 +47,8 @@ func Init(cmd *cobra.Command, args []string) error {
 
 	messageBus.AddPublisher(ctx, "HG.Integration.Product:Created", rabbitmqv1.Topic, product_events.Created{})
 
-	rabbitMQPublisher := infra.NewRabbitMQEventPublisher(messageBus)
+	rabbitMQPublisher := infra.NewRabbitMQEventPublisher(messageBus, logger)
+	eventDispatcher := infra.NewEventDispatcher(logger)
 
 	httpErrorHandler := middlewares.NewHttpErrorHandler()
 
@@ -73,7 +74,7 @@ func Init(cmd *cobra.Command, args []string) error {
 	//	return userService.AuthUser(context.Background(), username, password)
 	//}))
 
-	controllers_v1.NewProductController(e, mongoClient, rabbitMQPublisher, productService, httpErrorHandler)
+	controllers_v1.NewProductController(e, logger, mongoClient, rabbitMQPublisher, eventDispatcher, productService, httpErrorHandler)
 
 	return e.Start(fmt.Sprintf(":%v", cfg.Host.Port))
 }

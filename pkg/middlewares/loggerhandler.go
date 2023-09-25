@@ -55,7 +55,15 @@ func Logger(log logger.Logger) echo.MiddlewareFunc {
 			}
 
 			var correlationId = (c.Get("correlationId")).(string)
-			ctx := log.WithCorrelationId(context.Background(), correlationId)
+
+			// Bind correlation id to new context
+			ctx := context.WithValue(c.Request().Context(), "correlationId", correlationId)
+
+			// Bind logger with correlation id
+			ctx = log.WithCorrelationId(ctx, correlationId)
+
+			c.Set("context", ctx)
+
 			log.Request(ctx, field)
 
 			if err := next(c); err != nil {
