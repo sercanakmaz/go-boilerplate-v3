@@ -13,6 +13,7 @@ import (
 type IProductRepository interface {
 	FindOneById(ctx context.Context, id primitive.ObjectID) (*Product, error)
 	FindOneBySku(ctx context.Context, sku string) (*Product, error)
+	Delete(ctx context.Context, product *Product) error
 	Add(ctx context.Context, product *Product) error
 	Update(ctx context.Context, product *Product) error
 }
@@ -42,6 +43,16 @@ func (repository productRepository) FindOneBySku(ctx context.Context, sku string
 	var product *Product
 	err := repository.db.Collection(_collectionName).FindOne(sessionContext, bson.M{"Sku": sku}).Decode(&product)
 	return product, err
+}
+
+func (repository productRepository) Delete(ctx context.Context, product *Product) error {
+	sessionContext := ourMongo.GetSessionContext(ctx)
+
+	_, err := repository.db.Collection(_collectionName).DeleteOne(sessionContext, bson.M{"Sku": product.Sku})
+
+	ddd.DispatchDomainEvents(ctx, product)
+
+	return err
 }
 
 func (repository productRepository) Add(ctx context.Context, product *Product) error {

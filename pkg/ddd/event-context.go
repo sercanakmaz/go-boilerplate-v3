@@ -31,19 +31,19 @@ func GetEventContext(ctx context.Context) *EventContext {
 	return result.(*EventContext)
 }
 
-func DispatchDomainEvents(ctx context.Context, order IAggregateRoot) {
+func DispatchDomainEvents(ctx context.Context, aggregate IAggregateRoot) {
 	var eventContext = GetEventContext(ctx)
 
 	if eventContext == nil {
-		order.ClearDomainEvents()
+		aggregate.ClearDomainEvents()
 		return
 	}
 
-	for _, event := range order.GetDomainEvents() {
+	for _, event := range aggregate.GetDomainEvents() {
 		eventContext.AddRaised(event)
 	}
 
-	order.ClearDomainEvents()
+	aggregate.ClearDomainEvents()
 }
 
 func (self *EventContext) AddRaised(event IBaseEvent) {

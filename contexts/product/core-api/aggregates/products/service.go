@@ -8,6 +8,7 @@ import (
 type (
 	IProductService interface {
 		AddNew(ctx context.Context, sku string, name string, initialStock int, price shared.Money, categoryID int) (*Product, error)
+		Delete(ctx context.Context, sku string) error
 		GetBySku(ctx context.Context, sku string) (*Product, error)
 	}
 	productService struct {
@@ -27,6 +28,21 @@ func (service productService) AddNew(ctx context.Context, sku string, name strin
 	var err = service.Repository.Add(ctx, product)
 
 	return product, err
+}
+
+func (service productService) Delete(ctx context.Context, sku string) error {
+	var (
+		err     error
+		product *Product
+	)
+
+	if product, err = service.Repository.FindOneBySku(ctx, sku); err != nil {
+		return err
+	}
+
+	product.deleteProduct()
+
+	return service.Repository.Delete(ctx, product)
 }
 
 func (service productService) GetBySku(ctx context.Context, sku string) (*Product, error) {

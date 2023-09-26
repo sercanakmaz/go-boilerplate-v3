@@ -46,6 +46,7 @@ func Init(cmd *cobra.Command, args []string) error {
 		rabbitmqv1.PrefetchCount(1))
 
 	messageBus.AddPublisher(ctx, "HG.Integration.Product:Created", rabbitmqv1.Topic, product_events.Created{})
+	messageBus.AddPublisher(ctx, "HG.Integration.Product:Deleted", rabbitmqv1.Topic, product_events.Deleted{})
 
 	rabbitMQPublisher := infra.NewRabbitMQEventPublisher(messageBus, logger)
 	eventDispatcher := infra.NewEventDispatcher(logger)

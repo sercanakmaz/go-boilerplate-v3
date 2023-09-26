@@ -67,3 +67,10 @@ func (u *Product) calculateFinalPrice() {
 func (u *Product) brandCross() {
 	// Crossing stuff
 }
+
+func (u *Product) deleteProduct() {
+	u.RaiseEvent(&products.Deleted{
+		Id:  u.Id.Hex(),
+		Sku: u.Sku,
+	})
+}
