@@ -16,6 +16,7 @@ type IProductRepository interface {
 	Delete(ctx context.Context, product *Product) error
 	Add(ctx context.Context, product *Product) error
 	Update(ctx context.Context, product *Product) error
+	UpdateStock(ctx context.Context, product *UpdateProductStock) error
 }
 
 const _collectionName = "Products"
@@ -69,6 +70,16 @@ func (repository productRepository) Update(ctx context.Context, product *Product
 	sessionContext := ourMongo.GetSessionContext(ctx)
 
 	_, err := repository.db.Collection(_collectionName).ReplaceOne(sessionContext, bson.M{"_id": product.Id}, &product)
+
+	return err
+}
+
+func (repository productRepository) UpdateStock(ctx context.Context, product *UpdateProductStock) error {
+	sessionContext := ourMongo.GetSessionContext(ctx)
+
+	_, err := repository.db.Collection(_collectionName).UpdateOne(sessionContext, bson.M{"Sku": product.Sku}, bson.M{
+		"$set": product,
+	})
 
 	return err
 }

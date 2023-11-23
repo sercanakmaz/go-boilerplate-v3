@@ -19,6 +19,11 @@ type Product struct {
 	domainEvents []ddd.IBaseEvent
 }
 
+type UpdateProductStock struct {
+	Sku   string `json:"sku" bson:"Sku"`
+	Stock int    `json:"stock" bson:"Stock"`
+}
+
 func (u *Product) ClearDomainEvents() {
 	u.domainEvents = nil
 }
@@ -55,6 +60,15 @@ func NewProduct(sku, name string, stock int, price shared.Money, categoryId int)
 	})
 
 	return product
+}
+
+func UpdateStock(sku string, stock int) *UpdateProductStock {
+	var UpdateProductStock = &UpdateProductStock{
+		Sku:   sku,
+		Stock: stock,
+	}
+
+	return UpdateProductStock
 }
 
 func (u *Product) calculateFinalPrice() {
