@@ -9,6 +9,7 @@ import (
 	"github.com/sercanakmaz/go-boilerplate-v3/events/product/products"
 	logger "github.com/sercanakmaz/go-boilerplate-v3/pkg/log"
 	"github.com/sercanakmaz/go-boilerplate-v3/pkg/rabbitmqv1"
+	"strconv"
 )
 
 var indexName = "product_ddd_qa"
@@ -35,6 +36,10 @@ func (c *ElasticProductConsumer) Construct() {
 	c.MessageBus.AddConsumer("HG.Elastic.Product.Delete").
 		SubscriberExchange("*", rabbitmqv1.Topic, "HG.Integration.Product:Deleted").
 		HandleConsumer(c.deleteElasticProduct())
+
+	c.MessageBus.AddConsumer("HG.Elastic.Product.Delete").
+		SubscriberExchange("*", rabbitmqv1.Topic, "HG.Integration.Product:StockUpdated").
+		HandleConsumer(c.updateStockElasticProduct())
 }
 
 func (c *ElasticProductConsumer) createElasticProduct() func(message rabbitmqv1.Message) error {
@@ -95,6 +100,40 @@ func (c *ElasticProductConsumer) deleteElasticProduct() func(message rabbitmqv1.
 		}
 
 		c.Logger.Info(ctx, "consumer delete elastic finish")
+
+		return nil
+	}
+}
+
+func (c *ElasticProductConsumer) updateStockElasticProduct() func(message rabbitmqv1.Message) error {
+	return func(message rabbitmqv1.Message) error {
+		var eventMessage products.Created
+
+		ctx := c.Logger.WithCorrelationId(context.Background(), message.GetCorrelationId())
+
+		if err := json.Unmarshal(message.Payload, &eventMessage); err != nil {
+			return err
+		}
+
+		c.Logger.Info(ctx, "consumer STOCK elastic start")
+		c.Logger.Info(ctx, eventMessage.Sku)
+
+		data, _ := json.Marshal(eventMessage)
+
+		deleteRequest := esapi.UpdateRequest{
+			Index:      indexName,
+			DocumentID: eventMessage.Id,
+			Body:       bytes.NewReader(data),
+		}
+
+		_, err := deleteRequest.Do(context.Background(), c.Client)
+		if err != nil {
+			return err
+		}
+
+		c.Logger.Info(ctx, strconv.Itoa(eventMessage.Stock))
+
+		c.Logger.Info(ctx, "consumer STOCK elastic finish")
 
 		return nil
 	}

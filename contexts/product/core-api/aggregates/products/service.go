@@ -32,7 +32,7 @@ func (service productService) AddNew(ctx context.Context, sku string, name strin
 }
 
 func (service productService) UpdateStock(ctx context.Context, sku string, stock int) error {
-	var product = UpdateStock(sku, stock)
+	var product = UpdateProductStock(sku, stock)
 
 	var err = service.Repository.UpdateStock(ctx, product)
 
