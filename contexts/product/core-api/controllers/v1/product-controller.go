@@ -62,6 +62,14 @@ func CreateProduct(group *echo.Group, log logger.Logger, client *mongo.Client, r
 	})
 }
 
+// DeleteProduct godoc
+// @Accept  json
+// @Produce  json
+// @Param c body product.DeleteProductCommand true "body"
+// @Success 200 {object} products.Product
+// @Failure 400 {string} string
+// @Failure 500 {string} string
+// @Router /v1/products/ [delete]
 func DeleteProduct(group *echo.Group, log logger.Logger, client *mongo.Client, rabbitMQPublisher ddd.IEventPublisher, eventDispatcher ddd.IEventDispatcher, productService products.IProductService) {
 	group.DELETE("", func(c echo.Context) error {
 
@@ -74,7 +82,8 @@ func DeleteProduct(group *echo.Group, log logger.Logger, client *mongo.Client, r
 		ctx := (c.Get("context")).(context.Context)
 
 		if err = c.Bind(&command); err != nil {
-			panic(fmt.Errorf("%v %w", "CreateProductCommand", ourhttp.ErrCommandBindFailed))
+			fmt.Printf(err.Error())
+			panic(fmt.Errorf("%v %w", "DeleteProductCommand", ourhttp.ErrCommandBindFailed))
 		}
 
 		ctx = ddd.NewEventContext(ctx)
@@ -82,9 +91,9 @@ func DeleteProduct(group *echo.Group, log logger.Logger, client *mongo.Client, r
 		var handler = use_cases.NewDeleteProductUseCaseHandler(client, log, productService, rabbitMQPublisher, eventDispatcher)
 
 		if err = ddd.HandleUseCase(ctx, handler, command, result); err != nil {
-			panic(fmt.Errorf("%v %w", "CreateProductCommand", ourhttp.ErrUseCaseHandleFailed))
+			panic(fmt.Errorf("%v %w", "DeleteProductCommand", ourhttp.ErrUseCaseHandleFailed))
 		}
 
-		return c.JSON(http.StatusCreated, nil)
+		return c.JSON(http.StatusOK, nil)
 	})
 }
