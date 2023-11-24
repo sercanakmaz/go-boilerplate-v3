@@ -6,9 +6,10 @@ import (
 )
 
 type Config struct {
-	Mongo    mongo.Config
-	Host     Host
-	RabbitMQ RabbitMQConfig
+	Mongo         mongo.Config
+	Host          Host
+	RabbitMQ      RabbitMQConfig
+	ElasticSearch ElasticSearch
 }
 
 type Host struct {
@@ -26,4 +27,9 @@ type RabbitMQConfig struct {
 		MaxAttempt int
 		Interval   time.Duration
 	}
+}
+
+type ElasticSearch struct {
+	Host string
+	Port string
 }

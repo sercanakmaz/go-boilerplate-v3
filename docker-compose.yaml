@@ -40,12 +40,21 @@ services:
       - RABBITMQ_DEFAULT_USER=sa
       - RABBITMQ_DEFAULT_PASS=Sa123456
       - RABBITMQ_LOGS=/var/log/rabbitmq/rabbit.log
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.14.1
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+    ports:
+      - "9200:9200"
+      - "9300:9300"
 
 # 1. Host dosyasına aşağıdakileri ekleyin
 
 # 127.0.0.1 mongo0
 # 127.0.0.1 mongo1
 # 127.0.0.1 mongo2
+# 127.0.0.1 elastic
 
 # 2. Mongo node'larından birine bağlanın
 

@@ -17,5 +17,9 @@
       "MaxAttempt": 5,
       "Interval": 1000
     }
+  },
+  "ElasticSearch": {
+    "Host": "http://127.0.0.1",
+    "Port": "9200"
   }
 }

@@ -8,6 +8,7 @@ import (
 type (
 	IProductService interface {
 		AddNew(ctx context.Context, sku string, name string, initialStock int, price shared.Money, categoryID int) (*Product, error)
+		UpdateStock(ctx context.Context, sku string, stock int) error
 		Delete(ctx context.Context, sku string) error
 		GetBySku(ctx context.Context, sku string) (*Product, error)
 	}
@@ -28,6 +29,14 @@ func (service productService) AddNew(ctx context.Context, sku string, name strin
 	var err = service.Repository.Add(ctx, product)
 
 	return product, err
+}
+
+func (service productService) UpdateStock(ctx context.Context, sku string, stock int) error {
+	var product = UpdateProductStock(sku, stock)
+
+	var err = service.Repository.UpdateStock(ctx, product)
+
+	return err
 }
 
 func (service productService) Delete(ctx context.Context, sku string) error {
