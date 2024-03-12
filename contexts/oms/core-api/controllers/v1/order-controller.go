@@ -72,7 +72,7 @@ func RejectPayment(group *echo.Group, client *mongo.Client, orderService orders.
 	group.PUT(":orderNumber/reject-payment", func(ctx echo.Context) error {
 
 		var (
-			command *orderModels.RejectOrderPaymentCommand
+			command orderModels.RejectOrderPaymentCommand
 			result  = new(ddd.UseCaseResult[string])
 			err     error
 		)
@@ -85,7 +85,7 @@ func RejectPayment(group *echo.Group, client *mongo.Client, orderService orders.
 
 		var handler = use_cases.NewRejectOrderPaymentUseCaseHandler(client, orderService, orderLineService)
 
-		if err = ddd.HandleUseCase(ctx.Request().Context(), handler, command, result); err != nil {
+		if err = ddd.HandleUseCase(ctx.Request().Context(), handler, &command, result); err != nil {
 			panic(fmt.Errorf("%v %w", "RejectOrderPaymentCommand", ourhttp.ErrUseCaseHandleFailed))
 		}
 

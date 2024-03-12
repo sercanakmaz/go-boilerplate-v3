@@ -28,5 +28,11 @@ func (s *OrderPaymentRejectedEventHandler) Handle(ctx context.Context, paymentRe
 		}
 	}
 
+	// payment'ı çetk
+	// reject
+	// orderLine
+	// reject
+	// success
+
 	return nil
 }

@@ -9,8 +9,8 @@
   "RabbitMQ": {
     "Host": "127.0.0.1",
     "Port": "5672",
-    "Username": "sa",
-    "Password": "Sa123456",
+    "Username": "guest",
+    "Password": "guest",
     "VHost": "/",
     "ConnectionName": "github.com/sercanakmaz/go-boilerplate-v3",
     "Reconnect": {

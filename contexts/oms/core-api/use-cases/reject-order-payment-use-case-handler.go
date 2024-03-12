@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/sercanakmaz/go-boilerplate-v3/contexts/oms/core-api/aggregates/orderlines"
 	"github.com/sercanakmaz/go-boilerplate-v3/contexts/oms/core-api/aggregates/orders"
+	"github.com/sercanakmaz/go-boilerplate-v3/contexts/oms/core-api/infra"
 	orderModels "github.com/sercanakmaz/go-boilerplate-v3/models/order"
 	"github.com/sercanakmaz/go-boilerplate-v3/pkg/ddd"
 	ourMongo "github.com/sercanakmaz/go-boilerplate-v3/pkg/mongo"
@@ -25,7 +26,7 @@ func NewRejectOrderPaymentUseCaseHandler(client *mongo.Client, orderService orde
 	}
 
 	handler.middlewares = append(handler.middlewares, ourMongo.NewTransactionMiddleware[*orderModels.RejectOrderPaymentCommand, string](client))
-	handler.middlewares = append(handler.middlewares, ddd.NewEventHandlerDispatcherMiddleware[*orderModels.RejectOrderPaymentCommand, string](orderLineService))
+	handler.middlewares = append(handler.middlewares, ddd.NewEventHandlerDispatcherMiddleware[*orderModels.RejectOrderPaymentCommand, string](infra.NewEventHandlerDispatcher(orderLineService)))
 
 	return handler
 }
