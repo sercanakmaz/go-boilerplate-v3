@@ -3,7 +3,7 @@ package transport
 import (
 	"bytes"
 	"context"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"time"
 
@@ -28,8 +28,8 @@ func (self *loggignMiddleware) Request(ctx context.Context, req *http.Request) e
 	var contents = []byte{}
 
 	if req.Body != nil && !self.ignoreRequestBody {
-		contents, _ = ioutil.ReadAll(req.Body)
-		req.Body = ioutil.NopCloser(bytes.NewReader(contents))
+		contents, _ = io.ReadAll(req.Body)
+		req.Body = io.NopCloser(bytes.NewReader(contents))
 	}
 
 	reqRelativeUrl := req.URL.Path + "?" + req.URL.RawQuery
@@ -54,8 +54,8 @@ func (self *loggignMiddleware) Response(ctx context.Context, req *http.Request, 
 		responseStatusCode = resp.StatusCode
 
 		if resp.Body != nil && !self.ignoreResponseBody {
-			contents, _ = ioutil.ReadAll(resp.Body)
-			resp.Body = ioutil.NopCloser(bytes.NewReader(contents))
+			contents, _ = io.ReadAll(resp.Body)
+			resp.Body = io.NopCloser(bytes.NewReader(contents))
 		}
 	}
 

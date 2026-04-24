@@ -15,3 +15,9 @@ type ConsumerContext struct {
 func (c *ConsumerContext) Unmarshal(t interface{}) {
 	json.Unmarshal(c.Data, t)
 }
+
+func Decode[T any](c *ConsumerContext) (T, error) {
+	var result T
+	err := json.Unmarshal(c.Data, &result)
+	return result, err
+}

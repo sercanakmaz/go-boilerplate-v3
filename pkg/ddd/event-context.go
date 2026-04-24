@@ -2,10 +2,13 @@ package ddd
 
 import (
 	"context"
+	"slices"
 	"sync"
 )
 
-var eventContextKey = "eventContext"
+type eventContextKeyType struct{}
+
+var eventContextKey = eventContextKeyType{}
 
 type EventContext struct {
 	raisedEvents     []IBaseEvent
@@ -59,9 +62,7 @@ func (self *EventContext) AddDispatched(event IBaseEvent) {
 }
 
 func (self *EventContext) TakeRaised() IBaseEvent {
-
 	self.mu.Lock()
-
 	defer self.mu.Unlock()
 
 	if len(self.raisedEvents) == 0 {
@@ -69,16 +70,12 @@ func (self *EventContext) TakeRaised() IBaseEvent {
 	}
 
 	result := self.raisedEvents[0]
-
-	self.raisedEvents = self.raisedEvents[1:]
-
+	self.raisedEvents = slices.Delete(self.raisedEvents, 0, 1)
 	return result
 }
 
 func (self *EventContext) TakeDispatched() IBaseEvent {
-
 	self.mu.Lock()
-
 	defer self.mu.Unlock()
 
 	if len(self.dispatchedEvents) == 0 {
@@ -86,8 +83,6 @@ func (self *EventContext) TakeDispatched() IBaseEvent {
 	}
 
 	result := self.dispatchedEvents[0]
-
-	self.dispatchedEvents = self.dispatchedEvents[1:]
-
+	self.dispatchedEvents = slices.Delete(self.dispatchedEvents, 0, 1)
 	return result
 }

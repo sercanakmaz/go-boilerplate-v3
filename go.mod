@@ -1,6 +1,6 @@
 module github.com/sercanakmaz/go-boilerplate-v3
 
-go 1.20
+go 1.24
 
 require (
 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751
@@ -8,11 +8,9 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/labstack/echo/v4 v4.10.2
 	github.com/labstack/gommon v0.4.0
-	github.com/satori/go.uuid v1.2.0
-	github.com/sirupsen/logrus v1.9.0
+	github.com/rabbitmq/amqp091-go v1.10.0
 	github.com/spf13/cobra v1.6.1
 	github.com/spf13/viper v1.15.0
-	github.com/streadway/amqp v1.0.0
 	github.com/swaggo/files v1.0.1
 	github.com/swaggo/swag v1.16.1
 	go.mongodb.org/mongo-driver v1.11.3

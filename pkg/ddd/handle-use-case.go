@@ -31,7 +31,7 @@ func HandleUseCase[H IBaseUseCaseHandler[U, R], U IBaseUseCase, R any](ctx conte
 		if dispatcher != nil {
 			eventContext := GetEventContext(ctx)
 
-			for true {
+			for {
 				raisedEvent := eventContext.TakeRaised()
 				if raisedEvent == nil {
 					break

@@ -2,6 +2,7 @@ package use_cases
 
 import (
 	"context"
+
 	"github.com/sercanakmaz/go-boilerplate-v3/contexts/product/core-api/aggregates/products"
 	productModels "github.com/sercanakmaz/go-boilerplate-v3/models/product"
 	"github.com/sercanakmaz/go-boilerplate-v3/pkg/ddd"
@@ -11,12 +12,12 @@ import (
 )
 
 type DeleteProductUseCaseHandler struct {
+	ddd.BaseUseCaseHandler[*productModels.DeleteProductCommand, *productModels.DeleteProductResponse]
 	client            *mongo.Client
 	productService    products.IProductService
 	rabbitMQPublisher ddd.IEventPublisher
 	eventDispatcher   ddd.IEventDispatcher
 	logger            logger.Logger
-	middlewares       []ddd.IBaseUseCaseMiddleware[*productModels.DeleteProductCommand, *productModels.DeleteProductResponse]
 }
 
 func NewDeleteProductUseCaseHandler(client *mongo.Client, log logger.Logger, productService products.IProductService, rabbitMQPublisher ddd.IEventPublisher, eventDispatcher ddd.IEventDispatcher) *DeleteProductUseCaseHandler {
@@ -34,13 +35,11 @@ func NewDeleteProductUseCaseHandler(client *mongo.Client, log logger.Logger, pro
 }
 
 func (self *DeleteProductUseCaseHandler) SetMiddlewares() {
-	self.middlewares = append(self.middlewares, ourMongo.NewTransactionMiddleware[*productModels.DeleteProductCommand, *productModels.DeleteProductResponse](self.client))
-	self.middlewares = append(self.middlewares, ddd.NewEventHandlerDispatcherMiddleware[*productModels.DeleteProductCommand, *productModels.DeleteProductResponse](self.eventDispatcher))
-	self.middlewares = append(self.middlewares, ddd.NewEventPublisherMiddleware[*productModels.DeleteProductCommand, *productModels.DeleteProductResponse](self.rabbitMQPublisher))
-}
-
-func (self *DeleteProductUseCaseHandler) GetMiddlewares() []ddd.IBaseUseCaseMiddleware[*productModels.DeleteProductCommand, *productModels.DeleteProductResponse] {
-	return self.middlewares
+	self.Use(
+		ourMongo.NewTransactionMiddleware[*productModels.DeleteProductCommand, *productModels.DeleteProductResponse](self.client),
+		ddd.NewEventHandlerDispatcherMiddleware[*productModels.DeleteProductCommand, *productModels.DeleteProductResponse](self.eventDispatcher),
+		ddd.NewEventPublisherMiddleware[*productModels.DeleteProductCommand, *productModels.DeleteProductResponse](self.rabbitMQPublisher),
+	)
 }
 
 func (self *DeleteProductUseCaseHandler) Handle(ctx context.Context, command *productModels.DeleteProductCommand) (error, *ddd.UseCaseResult[*productModels.DeleteProductResponse]) {

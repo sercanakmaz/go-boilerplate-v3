@@ -4,12 +4,13 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"strconv"
+
 	"github.com/elastic/go-elasticsearch/v7"
 	"github.com/elastic/go-elasticsearch/v7/esapi"
 	"github.com/sercanakmaz/go-boilerplate-v3/events/product/products"
 	logger "github.com/sercanakmaz/go-boilerplate-v3/pkg/log"
 	"github.com/sercanakmaz/go-boilerplate-v3/pkg/rabbitmqv1"
-	"strconv"
 )
 
 var indexName = "product_ddd_qa"
@@ -44,11 +45,10 @@ func (c *ElasticProductConsumer) Construct() {
 
 func (c *ElasticProductConsumer) createElasticProduct() func(message rabbitmqv1.Message) error {
 	return func(message rabbitmqv1.Message) error {
-		var eventMessage products.Created
-
 		ctx := c.Logger.WithCorrelationId(context.Background(), message.GetCorrelationId())
 
-		if err := json.Unmarshal(message.Payload, &eventMessage); err != nil {
+		eventMessage, err := rabbitmqv1.DecodeMessage[products.Created](message)
+		if err != nil {
 			return err
 		}
 
@@ -65,7 +65,7 @@ func (c *ElasticProductConsumer) createElasticProduct() func(message rabbitmqv1.
 			Refresh:    "true",
 		}
 
-		_, err := indexRequest.Do(context.Background(), c.Client)
+		_, err = indexRequest.Do(context.Background(), c.Client)
 		if err != nil {
 			return err
 		}
@@ -78,11 +78,10 @@ func (c *ElasticProductConsumer) createElasticProduct() func(message rabbitmqv1.
 
 func (c *ElasticProductConsumer) deleteElasticProduct() func(message rabbitmqv1.Message) error {
 	return func(message rabbitmqv1.Message) error {
-		var eventMessage products.Created
-
 		ctx := c.Logger.WithCorrelationId(context.Background(), message.GetCorrelationId())
 
-		if err := json.Unmarshal(message.Payload, &eventMessage); err != nil {
+		eventMessage, err := rabbitmqv1.DecodeMessage[products.Created](message)
+		if err != nil {
 			return err
 		}
 
@@ -94,7 +93,7 @@ func (c *ElasticProductConsumer) deleteElasticProduct() func(message rabbitmqv1.
 			DocumentID: eventMessage.Id,
 		}
 
-		_, err := deleteRequest.Do(context.Background(), c.Client)
+		_, err = deleteRequest.Do(context.Background(), c.Client)
 		if err != nil {
 			return err
 		}
@@ -107,11 +106,10 @@ func (c *ElasticProductConsumer) deleteElasticProduct() func(message rabbitmqv1.
 
 func (c *ElasticProductConsumer) updateStockElasticProduct() func(message rabbitmqv1.Message) error {
 	return func(message rabbitmqv1.Message) error {
-		var eventMessage products.Created
-
 		ctx := c.Logger.WithCorrelationId(context.Background(), message.GetCorrelationId())
 
-		if err := json.Unmarshal(message.Payload, &eventMessage); err != nil {
+		eventMessage, err := rabbitmqv1.DecodeMessage[products.Created](message)
+		if err != nil {
 			return err
 		}
 
@@ -126,7 +124,7 @@ func (c *ElasticProductConsumer) updateStockElasticProduct() func(message rabbit
 			Body:       bytes.NewReader(data),
 		}
 
-		_, err := deleteRequest.Do(context.Background(), c.Client)
+		_, err = deleteRequest.Do(context.Background(), c.Client)
 		if err != nil {
 			return err
 		}

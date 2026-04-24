@@ -2,12 +2,12 @@ package products
 
 import (
 	"context"
+
 	"github.com/sercanakmaz/go-boilerplate-v3/pkg/ddd"
 	ourMongo "github.com/sercanakmaz/go-boilerplate-v3/pkg/mongo"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type IProductRepository interface {
@@ -19,37 +19,27 @@ type IProductRepository interface {
 	UpdateStock(ctx context.Context, product *Product) error
 }
 
-const _collectionName = "Products"
-
 type productRepository struct {
-	db              *mongo.Database
+	*ourMongo.MongoRepository[Product]
 	eventDispatcher ddd.IEventDispatcher
 }
 
 func NewProductRepository(db *mongo.Database) IProductRepository {
-	return &productRepository{db: db}
+	return &productRepository{
+		MongoRepository: ourMongo.NewMongoRepository[Product](db),
+	}
 }
 
 func (repository productRepository) FindOneById(ctx context.Context, id primitive.ObjectID) (*Product, error) {
-	sessionContext := ourMongo.GetSessionContext(ctx)
-
-	var product *Product
-	err := repository.db.Collection(_collectionName).FindOne(sessionContext, bson.M{"_id": id}).Decode(&product)
-	return product, err
+	return repository.FindOneByFilter(ctx, bson.M{"_id": id})
 }
 
 func (repository productRepository) FindOneBySku(ctx context.Context, sku string) (*Product, error) {
-	sessionContext := ourMongo.GetSessionContext(ctx)
-
-	var product *Product
-	err := repository.db.Collection(_collectionName).FindOne(sessionContext, bson.M{"Sku": sku}).Decode(&product)
-	return product, err
+	return repository.FindOneByFilter(ctx, bson.M{"Sku": sku})
 }
 
 func (repository productRepository) Delete(ctx context.Context, product *Product) error {
-	sessionContext := ourMongo.GetSessionContext(ctx)
-
-	_, err := repository.db.Collection(_collectionName).DeleteOne(sessionContext, bson.M{"Sku": product.Sku})
+	err := repository.DeleteOne(ctx, bson.M{"Sku": product.Sku})
 
 	ddd.DispatchDomainEvents(ctx, product)
 
@@ -57,9 +47,7 @@ func (repository productRepository) Delete(ctx context.Context, product *Product
 }
 
 func (repository productRepository) Add(ctx context.Context, product *Product) error {
-	sessionContext := ourMongo.GetSessionContext(ctx)
-
-	_, err := repository.db.Collection(_collectionName).InsertOne(sessionContext, &product, options.InsertOne())
+	err := repository.InsertOne(ctx, product)
 
 	ddd.DispatchDomainEvents(ctx, product)
 
@@ -67,20 +55,11 @@ func (repository productRepository) Add(ctx context.Context, product *Product) e
 }
 
 func (repository productRepository) Update(ctx context.Context, product *Product) error {
-	sessionContext := ourMongo.GetSessionContext(ctx)
-
-	_, err := repository.db.Collection(_collectionName).ReplaceOne(sessionContext, bson.M{"_id": product.Id}, &product)
-
-	return err
+	return repository.ReplaceOne(ctx, bson.M{"_id": product.Id}, product)
 }
 
 func (repository productRepository) UpdateStock(ctx context.Context, product *Product) error {
-	sessionContext := ourMongo.GetSessionContext(ctx)
-
-	in := bson.M{}
-	in["stock"] = product.Stock
-
-	_, err := repository.db.Collection(_collectionName).UpdateOne(sessionContext, bson.M{"Sku": product.Sku}, bson.M{"$set": in})
+	err := repository.UpdateOne(ctx, bson.M{"Sku": product.Sku}, bson.M{"$set": bson.M{"stock": product.Stock}})
 
 	ddd.DispatchDomainEvents(ctx, product)
 

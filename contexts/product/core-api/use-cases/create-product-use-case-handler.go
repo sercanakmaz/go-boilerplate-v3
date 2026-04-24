@@ -2,6 +2,7 @@ package use_cases
 
 import (
 	"context"
+
 	"github.com/sercanakmaz/go-boilerplate-v3/contexts/product/core-api/aggregates/products"
 	productModels "github.com/sercanakmaz/go-boilerplate-v3/models/product"
 	"github.com/sercanakmaz/go-boilerplate-v3/pkg/ddd"
@@ -11,12 +12,12 @@ import (
 )
 
 type CreateProductUseCaseHandler struct {
+	ddd.BaseUseCaseHandler[*productModels.CreateProductCommand, *productModels.CreateProductResponse]
 	client            *mongo.Client
 	productService    products.IProductService
 	rabbitMQPublisher ddd.IEventPublisher
 	eventDispatcher   ddd.IEventDispatcher
 	logger            logger.Logger
-	middlewares       []ddd.IBaseUseCaseMiddleware[*productModels.CreateProductCommand, *productModels.CreateProductResponse]
 }
 
 func NewCreateProductUseCaseHandler(client *mongo.Client, log logger.Logger, productService products.IProductService, rabbitMQPublisher ddd.IEventPublisher, eventDispatcher ddd.IEventDispatcher) *CreateProductUseCaseHandler {
@@ -34,13 +35,11 @@ func NewCreateProductUseCaseHandler(client *mongo.Client, log logger.Logger, pro
 }
 
 func (self *CreateProductUseCaseHandler) SetMiddlewares() {
-	self.middlewares = append(self.middlewares, ourMongo.NewTransactionMiddleware[*productModels.CreateProductCommand, *productModels.CreateProductResponse](self.client))
-	self.middlewares = append(self.middlewares, ddd.NewEventHandlerDispatcherMiddleware[*productModels.CreateProductCommand, *productModels.CreateProductResponse](self.eventDispatcher))
-	self.middlewares = append(self.middlewares, ddd.NewEventPublisherMiddleware[*productModels.CreateProductCommand, *productModels.CreateProductResponse](self.rabbitMQPublisher))
-}
-
-func (self *CreateProductUseCaseHandler) GetMiddlewares() []ddd.IBaseUseCaseMiddleware[*productModels.CreateProductCommand, *productModels.CreateProductResponse] {
-	return self.middlewares
+	self.Use(
+		ourMongo.NewTransactionMiddleware[*productModels.CreateProductCommand, *productModels.CreateProductResponse](self.client),
+		ddd.NewEventHandlerDispatcherMiddleware[*productModels.CreateProductCommand, *productModels.CreateProductResponse](self.eventDispatcher),
+		ddd.NewEventPublisherMiddleware[*productModels.CreateProductCommand, *productModels.CreateProductResponse](self.rabbitMQPublisher),
+	)
 }
 
 func (self *CreateProductUseCaseHandler) Handle(ctx context.Context, command *productModels.CreateProductCommand) (error, *ddd.UseCaseResult[*productModels.CreateProductResponse]) {

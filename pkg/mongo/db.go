@@ -2,9 +2,10 @@ package mongo
 
 import (
 	"context"
+	"time"
+
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"time"
 )
 
 func NewMongoDb(config Config) (*mongo.Database, *mongo.Client) {
@@ -15,7 +16,8 @@ func NewMongoDb(config Config) (*mongo.Database, *mongo.Client) {
 		panic(err)
 	}
 
-	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
 	err = client.Connect(ctx)
 
 	if err != nil {
