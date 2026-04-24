@@ -1,6 +1,6 @@
 package rmqc
 
-import "github.com/streadway/amqp"
+import amqp "github.com/rabbitmq/amqp091-go"
 
 type Queue struct {
 	Name string

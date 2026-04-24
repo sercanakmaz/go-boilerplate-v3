@@ -1,13 +1,14 @@
 package rabbitmqv1
 
 import (
+	"context"
 	"encoding/json"
-	"github.com/streadway/amqp"
-	"golang.org/x/net/context"
 	"reflect"
 	"strconv"
 	"sync"
 	"time"
+
+	amqp "github.com/rabbitmq/amqp091-go"
 )
 
 var (

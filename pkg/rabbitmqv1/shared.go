@@ -1,8 +1,10 @@
 package rabbitmqv1
 
 import (
+	"encoding/json"
+
 	"github.com/google/uuid"
-	"github.com/streadway/amqp"
+	amqp "github.com/rabbitmq/amqp091-go"
 )
 
 func getGuid() string {
@@ -15,6 +17,12 @@ func isGuid(p string) bool {
 		return false
 	}
 	return true
+}
+
+func DecodeMessage[T any](m Message) (T, error) {
+	var result T
+	err := json.Unmarshal(m.Payload, &result)
+	return result, err
 }
 
 func convertExchangeType(exchangeType ExchangeType) string {

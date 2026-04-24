@@ -8,7 +8,9 @@ type IEventDispatcher interface {
 	Dispatch(ctx context.Context, event IBaseEvent) error
 }
 
-var eventDispatcherKey = "eventDispatcher"
+type eventDispatcherKeyType struct{}
+
+var eventDispatcherKey = eventDispatcherKeyType{}
 
 func newEventDispatcher(ctx context.Context, dispatcher IEventDispatcher) context.Context {
 	return context.WithValue(ctx, eventDispatcherKey, dispatcher)

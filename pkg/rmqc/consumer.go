@@ -2,8 +2,9 @@ package rmqc
 
 import (
 	"fmt"
-	"github.com/streadway/amqp"
 	"log"
+
+	amqp "github.com/rabbitmq/amqp091-go"
 )
 
 type Consumer struct {

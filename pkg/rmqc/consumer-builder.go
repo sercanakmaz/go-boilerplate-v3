@@ -1,8 +1,9 @@
 package rmqc
 
 import (
-	"github.com/streadway/amqp"
 	"time"
+
+	amqp "github.com/rabbitmq/amqp091-go"
 )
 
 type ConsumerBuilder struct {

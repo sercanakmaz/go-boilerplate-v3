@@ -1,16 +1,17 @@
 package rabbitmqv1
 
 import (
+	"context"
 	"fmt"
-	"github.com/sercanakmaz/go-boilerplate-v3/pkg/log"
-	"github.com/streadway/amqp"
-	"golang.org/x/net/context"
-	"golang.org/x/sync/errgroup"
 	"net"
 	"os"
 	"reflect"
 	"runtime"
 	"time"
+
+	amqp "github.com/rabbitmq/amqp091-go"
+	"github.com/sercanakmaz/go-boilerplate-v3/pkg/log"
+	"golang.org/x/sync/errgroup"
 )
 
 var (

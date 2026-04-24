@@ -57,6 +57,20 @@ func NewProduct(sku, name string, stock int, price shared.Money, categoryId int)
 	return product
 }
 
+func UpdateProductStock(sku string, stock int) *Product {
+	var product = &Product{
+		Sku:   sku,
+		Stock: stock,
+	}
+
+	product.RaiseEvent(&products.StockUpdated{
+		Sku:   product.Sku,
+		Stock: product.Stock,
+	})
+
+	return product
+}
+
 func (u *Product) calculateFinalPrice() {
 	u.FinalPrice = shared.Money{
 		Value:        u.Vat * u.Price.Value,

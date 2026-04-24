@@ -18,3 +18,12 @@ func (u *Product) ConvertCreateProductResponse() *productModels.CreateProductRes
 
 	return result
 }
+
+func (u *Product) ConvertUpdateStockResponse() *productModels.UpdateStockResponse {
+	var result = &productModels.UpdateStockResponse{
+		Sku:   u.Sku,
+		Stock: u.Stock,
+	}
+
+	return result
+}

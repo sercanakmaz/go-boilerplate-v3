@@ -4,9 +4,10 @@ import (
 	"bytes"
 	"context"
 	"encoding/binary"
-	"github.com/labstack/echo/v4"
-	"io/ioutil"
+	"io"
 	"time"
+
+	"github.com/labstack/echo/v4"
 
 	logger "github.com/sercanakmaz/go-boilerplate-v3/pkg/log"
 )
@@ -28,8 +29,8 @@ func Logger(log logger.Logger) echo.MiddlewareFunc {
 				field    logger.Field
 			)
 			if c.Request().Body != nil {
-				contents, _ = ioutil.ReadAll(c.Request().Body)
-				c.Request().Body = ioutil.NopCloser(bytes.NewReader(contents))
+				contents, _ = io.ReadAll(c.Request().Body)
+				c.Request().Body = io.NopCloser(bytes.NewReader(contents))
 			}
 
 			requestBodySizeInKb := binary.Size(contents) / 1024

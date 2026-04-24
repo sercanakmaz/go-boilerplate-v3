@@ -20,6 +20,7 @@ func NewProductController(e *echo.Echo, log logger.Logger, client *mongo.Client,
 	v1 := e.Group("/v1/products")
 
 	CreateProduct(v1, log, client, rabbitMQPublisher, eventDispatcher, productService)
+	UpdateProductStock(v1, log, client, rabbitMQPublisher, eventDispatcher, productService)
 	DeleteProduct(v1, log, client, rabbitMQPublisher, eventDispatcher, productService)
 
 	httpErrorHandler.Add(string_helper.ErrIsNullOrEmpty, http.StatusBadRequest)
@@ -62,6 +63,51 @@ func CreateProduct(group *echo.Group, log logger.Logger, client *mongo.Client, r
 	})
 }
 
+// UpdateProductStock UpdateStock godoc
+// @Accept  json
+// @Produce  json
+// @Param c body product.UpdateStockCommand true "body"
+// @Success 201 {object} products.Product
+// @Failure 400 {string} string
+// @Failure 500 {string} string
+// @Router /v1/products/update-stock [put]
+func UpdateProductStock(group *echo.Group, log logger.Logger, client *mongo.Client, rabbitMQPublisher ddd.IEventPublisher, eventDispatcher ddd.IEventDispatcher, productService products.IProductService) {
+	group.PUT("/update-stock", func(c echo.Context) error {
+
+		var (
+			command *productModels.UpdateStockCommand
+			product *products.Product
+			result  = new(ddd.UseCaseResult[*productModels.UpdateStockResponse])
+			err     error
+		)
+
+		ctx := (c.Get("context")).(context.Context)
+
+		if err = c.Bind(&command); err != nil {
+			panic(fmt.Errorf("%v %w", "UpdateStockCommand", ourhttp.ErrCommandBindFailed))
+		}
+
+		ctx = ddd.NewEventContext(ctx)
+
+		var handler = use_cases.NewUpdateStockUseCaseHandler(client, log, productService, rabbitMQPublisher, eventDispatcher)
+
+		if err = ddd.HandleUseCase(ctx, handler, command, result); err != nil {
+			fmt.Println(err.Error())
+			panic(fmt.Errorf("%v %w", "UpdateStockCommand", ourhttp.ErrUseCaseHandleFailed))
+		}
+
+		return c.JSON(http.StatusCreated, product)
+	})
+}
+
+// DeleteProduct godoc
+// @Accept  json
+// @Produce  json
+// @Param c body product.DeleteProductCommand true "body"
+// @Success 200 {object} products.Product
+// @Failure 400 {string} string
+// @Failure 500 {string} string
+// @Router /v1/products/ [delete]
 func DeleteProduct(group *echo.Group, log logger.Logger, client *mongo.Client, rabbitMQPublisher ddd.IEventPublisher, eventDispatcher ddd.IEventDispatcher, productService products.IProductService) {
 	group.DELETE("", func(c echo.Context) error {
 
@@ -74,7 +120,8 @@ func DeleteProduct(group *echo.Group, log logger.Logger, client *mongo.Client, r
 		ctx := (c.Get("context")).(context.Context)
 
 		if err = c.Bind(&command); err != nil {
-			panic(fmt.Errorf("%v %w", "CreateProductCommand", ourhttp.ErrCommandBindFailed))
+			fmt.Printf(err.Error())
+			panic(fmt.Errorf("%v %w", "DeleteProductCommand", ourhttp.ErrCommandBindFailed))
 		}
 
 		ctx = ddd.NewEventContext(ctx)
@@ -82,9 +129,9 @@ func DeleteProduct(group *echo.Group, log logger.Logger, client *mongo.Client, r
 		var handler = use_cases.NewDeleteProductUseCaseHandler(client, log, productService, rabbitMQPublisher, eventDispatcher)
 
 		if err = ddd.HandleUseCase(ctx, handler, command, result); err != nil {
-			panic(fmt.Errorf("%v %w", "CreateProductCommand", ourhttp.ErrUseCaseHandleFailed))
+			panic(fmt.Errorf("%v %w", "DeleteProductCommand", ourhttp.ErrUseCaseHandleFailed))
 		}
 
-		return c.JSON(http.StatusCreated, nil)
+		return c.JSON(http.StatusOK, nil)
 	})
 }

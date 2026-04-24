@@ -2,6 +2,7 @@ package infra
 
 import (
 	"context"
+
 	"github.com/sercanakmaz/go-boilerplate-v3/pkg/ddd"
 	logger "github.com/sercanakmaz/go-boilerplate-v3/pkg/log"
 	"github.com/sercanakmaz/go-boilerplate-v3/pkg/rabbitmqv1"
@@ -19,7 +20,7 @@ func NewRabbitMQEventPublisher(messageBus *rabbitmqv1.Client, log logger.Logger)
 func (p *RabbitMQEventPublisher) Publish(ctx context.Context) error {
 	eventContext := ddd.GetEventContext(ctx)
 
-	for true {
+	for {
 		dispatchedEvent := eventContext.TakeDispatched()
 		if dispatchedEvent == nil {
 			break
